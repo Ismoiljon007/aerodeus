@@ -1,0 +1,24 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+@mixin respond($w) {
+  @media (max-width: $w) {
+    @content;
+  }
+}
+
+@mixin container {
+  width: min(100% - 2 * $space-6, $container-max);
+  margin-inline: auto;
+}
+
+@mixin heading-1 {
+  font-family: $font-display;
+  font-size: 4.8rem;
+  line-height: 1;
+  font-weight: 400;
+
+  span {
+    color: rgba($color: $color-white, $alpha: 0.5);
+  }
+}

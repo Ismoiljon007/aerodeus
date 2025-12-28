@@ -1,0 +1,37 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'typography' as *;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 62.5%;
+}
+
+
+body {
+  margin: 0;
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  background: $color-bg;
+  color: $color-white;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+.container {
+  @include container;
+}

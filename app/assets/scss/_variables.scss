@@ -1,0 +1,13 @@
+$space-6: 2.4rem;
+$container-max: 120rem;
+$color-bg: #0E1530;
+$color-white: #fff;
+$color-primary: #1E4395;
+$color-yellow: #DEF900;
+
+.glass-dark {
+  background: rgba(16, 18, 24, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+}
