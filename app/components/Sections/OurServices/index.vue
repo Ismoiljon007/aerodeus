@@ -1,5 +1,8 @@
 <template>
-  <div class="our-services">
+  <div
+    ref="servicesRef"
+    class="our-services"
+  >
     <div class="container">
       <div class="our-services-wrapper">
         <h2 class="our-services-wrapper__title">
@@ -21,6 +24,84 @@
 <script setup lang="ts">
 import OurServicesPhotos from './ourServicesPhotos.vue';
 import OurServicestexts from './ourServicestexts.vue';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const servicesRef = ref<HTMLElement | null>(null);
+let servicesContext: gsap.Context | null = null;
+
+onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  const sectionEl = servicesRef.value;
+  if (!sectionEl) return;
+
+  servicesContext = gsap.context(() => {
+    const q = gsap.utils.selector(sectionEl);
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionEl,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    tl.from(q('.our-services-wrapper__title'), {
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.6,
+      ease: 'power2.out',
+      clearProps: 'opacity,transform,visibility',
+    }).from(
+      q('.our-services-wrapper__sub-title'),
+      {
+        autoAlpha: 0,
+        y: 16,
+        duration: 0.5,
+        ease: 'power2.out',
+        clearProps: 'opacity,transform,visibility',
+      },
+      '-=0.3',
+    ).from(
+      q('.our-services-photos-wrapper img'),
+      {
+        autoAlpha: 0,
+        y: 12,
+        duration: 0.5,
+        ease: 'power2.out',
+        stagger: 0.08,
+        clearProps: 'opacity,transform,visibility',
+      },
+      '-=0.2',
+    ).from(
+      q('.our-services-texts h2, .our-services-texts p, .our-services-texts button'),
+      {
+        autoAlpha: 0,
+        y: 12,
+        duration: 0.45,
+        ease: 'power2.out',
+        stagger: 0.08,
+        clearProps: 'opacity,transform,visibility',
+      },
+      '-=0.25',
+    ).from(
+      q('.our-services-bottom-item'),
+      {
+        autoAlpha: 0,
+        y: 10,
+        duration: 0.4,
+        ease: 'power2.out',
+        stagger: 0.06,
+        clearProps: 'opacity,transform,visibility',
+      },
+      '-=0.2',
+    );
+  }, sectionEl);
+});
+
+onBeforeUnmount(() => {
+  servicesContext?.revert();
+  servicesContext = null;
+});
 </script>
 
 <style scoped lang="scss">

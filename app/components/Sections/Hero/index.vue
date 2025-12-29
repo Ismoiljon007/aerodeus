@@ -13,10 +13,10 @@
     />
     <div class="container">
       <div class="hero_content">
-        <h2 class="hero_title">
+        <h2 class="hero_title" ref="titleRef">
           Oliy darajadagi xizmat
         </h2>
-        <p class="hero_desc">
+        <p class="hero_desc" ref="descRef">
           Premium xususiy samolyotlar bilan mutlaq qulaylik va nufuz
         </p>
         <UiButton class="hero_button">
@@ -24,17 +24,89 @@
         </UiButton>
       </div>
       <NuxtImg
+        ref="planeRef"
         width="1105"
         height="467"
         src="/images/png/plane.png"
         class="hero_img"
+        alt="Samolyot"
       />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
 defineProps<{ hero: any }>();
+
+const planeRef = ref<HTMLElement | null>(null);
+const titleRef = ref<HTMLElement | null>(null);
+const descRef = ref<HTMLElement | null>(null);
+let gsapContext: gsap.Context | null = null;
+let introTween: gsap.core.Tween | null = null;
+
+onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const planeRoot = planeRef.value as any;
+  const planeEl = planeRoot?.$el || planeRoot;
+  const target = planeEl?.querySelector?.('img') || planeEl;
+
+  if (!target) {
+    console.warn('Plane element topilmadi');
+    return;
+  }
+
+  gsapContext = gsap.context(() => {
+    gsap.set(target, { transformOrigin: '50% 50%' });
+    introTween = gsap.fromTo(
+      target,
+      { y: 20, scale: 0.7 },
+      {
+        y: 0,
+        scale: 1,
+        duration: 1.2,
+        ease: 'power3.out',
+        onComplete: () => {
+          gsap.to(target, {
+            yPercent: -200,
+            scale: 3,
+            ease: 'none',
+            overwrite: 'auto',
+            scrollTrigger: {
+              trigger: '.hero',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: true,
+              markers: false,
+            },
+          });
+          ScrollTrigger.refresh();
+        },
+      },
+    );
+
+    const textTargets = [titleRef.value, descRef.value].filter(Boolean);
+    if (textTargets.length) {
+      gsap.from(textTargets, {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.15,
+      });
+    }
+  }, target);
+});
+
+onBeforeUnmount(() => {
+  introTween?.kill();
+  introTween = null;
+  gsapContext?.revert();
+  gsapContext = null;
+});
 </script>
 
 <style scoped lang="scss">
@@ -55,20 +127,14 @@ defineProps<{ hero: any }>();
   @include respond(780px) {
     height: 60rem;
   }
-    @include respond(520px) {
-      height: 50rem;
-    }
-}
-@keyframes plane {
-  0% {
-    transform: scale(0.7) translateY(20px);
-  }
-  100% {
-    transform: scale(1) translateY(0);
+  @include respond(520px) {
+    height: 50rem;
   }
 }
+
 .hero {
   position: relative;
+
   &::after {
     content: "";
     width: 100%;
@@ -78,7 +144,9 @@ defineProps<{ hero: any }>();
     position: absolute;
     top: 0;
     left: 0;
+    pointer-events: none; // Click eventlarni o'tkazish
   }
+
   .container {
     position: absolute;
     top: 5.5rem;
@@ -87,12 +155,14 @@ defineProps<{ hero: any }>();
     z-index: 1;
     display: flex;
     justify-content: center;
+    overflow-x: hidden;
     flex-direction: column;
     align-items: center;
     @include respond(520px) {
       top: 4rem;
     }
   }
+
   &_content {
     max-width: 81.2rem;
     text-align: center;
@@ -101,6 +171,7 @@ defineProps<{ hero: any }>();
     align-items: center;
     margin-bottom: 2rem;
   }
+
   &_title {
     font-weight: 500;
     font-size: 7.5rem;
@@ -113,11 +184,13 @@ defineProps<{ hero: any }>();
       font-size: 4rem;
     }
   }
+
   &_button {
     @include respond(520px) {
       width: 100%;
     }
   }
+
   &_desc {
     font-weight: 400;
     font-size: 2.6rem;
@@ -128,10 +201,11 @@ defineProps<{ hero: any }>();
       margin-bottom: 4rem;
     }
   }
+
   &_img {
     width: 110.5rem;
     height: auto;
-    animation: plane 3s ease forwards;
+    will-change: transform;
     object-fit: contain;
     @include respond(1470px) {
       width: 90rem;

@@ -1,5 +1,8 @@
 <template>
-  <header class="site-header">
+  <header
+    ref="headerRef"
+    class="site-header"
+  >
     <div class="container">
       <div class="lang">
         <button class="lang_button">
@@ -87,6 +90,8 @@
 </template>
 
 <script setup lang="ts">
+import { gsap } from 'gsap';
+
 const emit = defineEmits<{
   (e: 'toggle-menu'): void
 }>();
@@ -97,6 +102,31 @@ const availableLocales = computed(() => {
   return locales.value.filter(i => i.code !== locale.value);
 });
 const openLang = ref<boolean>(false);
+const headerRef = ref<HTMLElement | null>(null);
+let headerContext: gsap.Context | null = null;
+
+onMounted(() => {
+  const headerEl = headerRef.value;
+  if (!headerEl) return;
+
+  headerContext = gsap.context(() => {
+    const q = gsap.utils.selector(headerEl);
+    const items = q('.lang, .sitenav, .site-logo, .site-header_button, .site-header_menu');
+    gsap.from(items, {
+      autoAlpha: 0,
+      y: -12,
+      duration: 0.6,
+      ease: 'power2.out',
+      stagger: 0.08,
+      clearProps: 'opacity,transform,visibility',
+    });
+  }, headerEl);
+});
+
+onBeforeUnmount(() => {
+  headerContext?.revert();
+  headerContext = null;
+});
 </script>
 
 <style scoped lang="scss">

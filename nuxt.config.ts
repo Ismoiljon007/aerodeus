@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxt/image', '@nuxt/eslint', 'v-gsap-nuxt', '@nuxtjs/i18n'],
+  modules: ['@nuxt/image', '@nuxt/eslint', '@nuxtjs/i18n'],
   i18n: {
     locales: [
       { code: 'en', name: 'En' },

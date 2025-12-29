@@ -1,7 +1,10 @@
 <template>
   <section class="booking">
     <div class="container">
-      <UiCard class="booking_card">
+      <UiCard
+        ref="cardRef"
+        class="booking_card"
+      >
         <div class="booking_card-header">
           <p class="booking_title">
             Yo'nalishni tanlang
@@ -206,10 +209,15 @@
 </template>
 
 <script setup lang="ts">
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
 type TripType = 'one_way' | 'round_trip'
 
 const tripType = ref<TripType>('one_way');
 const passengerCount = ref<number>(1);
+const cardRef = ref<HTMLElement | null>(null);
+let bookingContext: gsap.Context | null = null;
 const locations = [
   'Toshkent',
   'Samarqand',
@@ -261,6 +269,48 @@ function decrementPassengers() {
     passengerCount.value--;
   }
 }
+
+onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  const cardEl = cardRef.value as any;
+  const cardRoot = cardEl?.$el || cardEl;
+  if (!cardRoot) return;
+
+  bookingContext = gsap.context(() => {
+    const q = gsap.utils.selector(cardRoot);
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: cardRoot,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    tl.from(cardRoot, {
+      opacity: 0,
+      y: 24,
+      duration: 0.6,
+      ease: 'power2.out',
+      clearProps: 'transform,opacity',
+    }).from(
+      q('.booking_card-header, .booking_field'),
+      {
+        opacity: 0,
+        y: 16,
+        duration: 0.5,
+        ease: 'power2.out',
+        stagger: 0.08,
+        clearProps: 'transform,opacity',
+      },
+      '-=0.3',
+    );
+  }, cardRoot);
+});
+
+onBeforeUnmount(() => {
+  bookingContext?.revert();
+  bookingContext = null;
+});
 </script>
 
 <style scoped lang="scss">

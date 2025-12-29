@@ -10,7 +10,12 @@
       aria-hidden="true"
     >
       <path
+        class="hww-line-base"
+        :d="pathD"
+      />
+      <path
         ref="pathRef"
+        class="hww-line-progress"
         :d="pathD"
       />
     </svg>
@@ -95,6 +100,7 @@ const pathRef = ref<SVGPathElement | null>(null);
 
 const iconEls = ref<HTMLElement[]>([]);
 const pathD = ref('');
+const iconProgress = ref<number[]>([]);
 
 let totalLen = 0;
 let ro: ResizeObserver | null = null;
@@ -128,6 +134,46 @@ function catmullRomPath(points: Pt[], tension = 1) {
   return d;
 }
 
+function clamp(n: number, a: number, b: number) {
+  return Math.max(a, Math.min(b, n));
+}
+
+function getClosestLength(path: SVGPathElement, target: Pt) {
+  const len = path.getTotalLength();
+  if (!len)
+    return 0;
+  const steps = Math.max(12, Math.floor(len / 8));
+  let closestLen = 0;
+  let closestDist = Number.POSITIVE_INFINITY;
+
+  for (let i = 0; i <= steps; i++) {
+    const l = (i / steps) * len;
+    const p = path.getPointAtLength(l);
+    const dx = p.x - target.x;
+    const dy = p.y - target.y;
+    const d = (dx * dx) + (dy * dy);
+    if (d < closestDist) {
+      closestDist = d;
+      closestLen = l;
+    }
+  }
+
+  const span = len / steps;
+  for (let i = -8; i <= 8; i++) {
+    const l = clamp(closestLen + (i / 8) * span, 0, len);
+    const p = path.getPointAtLength(l);
+    const dx = p.x - target.x;
+    const dy = p.y - target.y;
+    const d = (dx * dx) + (dy * dy);
+    if (d < closestDist) {
+      closestDist = d;
+      closestLen = l;
+    }
+  }
+
+  return closestLen;
+}
+
 async function buildPath() {
   await nextTick();
 
@@ -140,6 +186,11 @@ async function buildPath() {
   // responsive: eski logikangga mos, 2 col bo‘lsa line yo‘q
   if (window.matchMedia('(max-width: 1177px)').matches) {
     pathD.value = '';
+    totalLen = 0;
+    iconProgress.value = [];
+    iconEls.value.forEach((el) => {
+      el?.classList.remove('is-active');
+    });
     return;
   }
 
@@ -178,12 +229,9 @@ async function buildPath() {
   totalLen = path.getTotalLength();
   path.style.strokeDasharray = `${totalLen}`;
   path.style.strokeDashoffset = `${totalLen}`;
+  iconProgress.value = normalized.map(p => getClosestLength(path, p));
 
   updateScroll(); // initial state
-}
-
-function clamp(n: number, a: number, b: number) {
-  return Math.max(a, Math.min(b, n));
 }
 
 function updateScroll() {
@@ -191,8 +239,12 @@ function updateScroll() {
   const path = pathRef.value;
   if (!wrap || !path || !totalLen)
     return;
-  if (!pathD.value)
+  if (!pathD.value) {
+    iconEls.value.forEach((el) => {
+      el?.classList.remove('is-active');
+    });
     return;
+  }
 
   const rect = wrap.getBoundingClientRect();
   const vh = window.innerHeight;
@@ -204,7 +256,16 @@ function updateScroll() {
   const t = (startAt - rect.top) / (startAt - endAt);
   const p = clamp(t, 0, 1);
 
-  path.style.strokeDashoffset = `${totalLen * (1 - p)}`;
+  const progressLen = totalLen * p;
+  path.style.strokeDashoffset = `${totalLen - progressLen}`;
+
+  iconEls.value.forEach((el, idx) => {
+    if (!el)
+      return;
+    const threshold = 6;
+    const iconLen = iconProgress.value[idx] ?? totalLen + 1;
+    el.classList.toggle('is-active', progressLen >= iconLen - threshold);
+  });
 }
 
 onMounted(async () => {
@@ -254,13 +315,21 @@ onBeforeUnmount(() => {
       display: none;
     }
 
-    path {
+    .hww-line-base {
       fill: none;
       stroke: rgba(255, 255, 255, 0.45);
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-dasharray: 8 10; // xohlasang olib tashlab solid qilasan
+    }
+
+    .hww-line-progress {
+      fill: none;
+      stroke: $color-yellow;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
       // scroll bilan ketadi, lekin “silk” effekt uchun:
       transition: stroke-dashoffset 0.08s linear;
     }
@@ -283,10 +352,17 @@ onBeforeUnmount(() => {
       align-items: center;
       justify-content: center;
       background: #0E1530;
+      color: $color-white;
       position: relative;
       z-index: 2; // icon doirasi line ustida turadi
 
       svg { display: block; }
+    }
+
+    .hww-icon.is-active {
+      border-color: $color-yellow;
+      color: $color-yellow;
+      box-shadow: 0 0 0 2px rgba($color-yellow, 0.2);
     }
 
     h3 { font-weight: 500; font-size: 20px; }

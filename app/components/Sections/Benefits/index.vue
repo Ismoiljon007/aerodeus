@@ -1,7 +1,12 @@
 <template>
-  <div class="benefits">
+  <div
+    ref="benefitsRef"
+    class="benefits"
+  >
     <div class="container">
-      <h2>Aerodeus Afzalliklari</h2>
+      <h2 class="benefits_title">
+        Aerodeus Afzalliklari
+      </h2>
       <div class="benefits-wrapper">
         <BenefitsCards />
       </div>
@@ -11,6 +16,52 @@
 
 <script setup lang="ts">
 import BenefitsCards from './benefitsCards.vue';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const benefitsRef = ref<HTMLElement | null>(null);
+let benefitsContext: gsap.Context | null = null;
+
+onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  const sectionEl = benefitsRef.value;
+  if (!sectionEl) return;
+
+  benefitsContext = gsap.context(() => {
+    const q = gsap.utils.selector(sectionEl);
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionEl,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    tl.from(q('.benefits_title'), {
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.6,
+      ease: 'power2.out',
+      clearProps: 'opacity,transform,visibility',
+    }).from(
+      q('.benefits-card'),
+      {
+        autoAlpha: 0,
+        y: 20,
+        duration: 0.5,
+        ease: 'power2.out',
+        stagger: 0.08,
+        clearProps: 'opacity,transform,visibility',
+      },
+      '-=0.2',
+    );
+  }, sectionEl);
+});
+
+onBeforeUnmount(() => {
+  benefitsContext?.revert();
+  benefitsContext = null;
+});
 </script>
 
 <style scoped lang="scss">
