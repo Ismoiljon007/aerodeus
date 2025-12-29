@@ -1,10 +1,12 @@
 <template>
   <main>
+    <SectionsContact />
     <SectionsHero :hero="hero" />
     <SectionsBooking />
     <SectionsPartners :partners="partners" />
     <SectionsBenefits :advantages="advantages" />
     <SectionsOurServices :services="services" />
+    <SectionsFlights :aircrcraft="aircrcraft" />
     <LazySectionsMap />
     <SectionsHowWeWork />
     <SectionsAboutUs
@@ -29,6 +31,11 @@ const { data: advantages } = await useAsyncData(
 const { data: services } = await useAsyncData(
   'services',
   async () => apiFetch('/services/with-features/', { params: { lang: locale.value } }),
+  { watch: [locale] },
+);
+const { data: aircrcraft } = await useAsyncData(
+  'aircrcraft',
+  async () => apiFetch('/aircrcraft/', { params: { lang: locale.value } }),
   { watch: [locale] },
 );
 const { data: statistics } = await useAsyncData(
