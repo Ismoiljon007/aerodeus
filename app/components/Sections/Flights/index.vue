@@ -15,6 +15,8 @@
 
       <div class="flights__overlay flights__overlay--right" />
 
+      <pre>{{ props.aircrcraft }}</pre>
+
       <Swiper
         :modules="modules"
         effect="coverflow"
@@ -64,14 +66,14 @@
         @slide-change="onSlideChange"
       >
         <SwiperSlide
-          v-for="(flight, index) in flights"
+          v-for="(flight, index) in aircrcraft?.data"
           :key="index"
           v-slot="{ isActive }"
         >
           <article class="flight-card">
             <div class="flight-card__image-wrapper">
               <img
-                :src="flight.image"
+                :src="flight.main_image"
                 :alt="flight.title"
                 class="flight-card__image"
               >
@@ -84,14 +86,14 @@
 
               <ul class="flight-card__features">
                 <li
-                  v-for="(feature, idx) in flight.features"
+                  v-for="(feature, idx) in flight.specifications"
                   :key="idx"
                   class="flight-card__feature"
                   :class="{ active: isActive }"
                 >
                   <IconsCheck />
                   <p class="flight-card__feature--text">
-                    {{ feature }}
+                    {{ feature.text }}
                   </p>
                 </li>
               </ul>
@@ -139,100 +141,6 @@ function onSwiper(swiper: SwiperType) {
 function onSlideChange(swiper: SwiperType) {
   activeIndex.value = swiper.activeIndex;
 }
-
-const flights = ref([
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-  {
-    image: 'https://placehold.co/429x300',
-    badge: 'Recommended flights',
-    title: 'VIP & Government Flights',
-    features: [
-      'Certified according to Part 135',
-      'A leading way in upgraded',
-      'Upgrade of CD-820 and EU-820',
-      'Configuration for fourteen (14) passengers with fire protection',
-      'Adedi-tur V.2',
-      'Avio kia',
-    ],
-  },
-]);
 </script>
 
 <style lang="scss" scoped>
