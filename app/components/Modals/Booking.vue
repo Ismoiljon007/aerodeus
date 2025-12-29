@@ -1,14 +1,12 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div class="modal-overlay">
-        <div class="booking-modal">
-          <!-- Close button -->
-          <button class="close-btn">
-           <IconsClose />
+      <div v-if="modelValue" class="modal-overlay" @click="closeModal">
+        <div class="booking-modal" @click.stop>
+          <button class="close-btn" @click="closeModal">
+            <IconsClose />
           </button>
 
-          <!-- Modal header -->
           <div class="modal-header">
             <h2 class="modal-title">Bron qilish</h2>
             <p class="modal-subtitle">
@@ -16,25 +14,24 @@
             </p>
           </div>
 
-          <!-- Route info -->
           <div class="route-info">
             <div class="route-item">
               <div class="route-icon">
-                <IconsPilot1/>
+                <IconsPilot1 />
                 <span class="route-label">Ketish</span>
               </div>
               <div class="route-details">
-                <span class="route-location">O’zbekiston, Toshkent</span>
+                <span class="route-location">O'zbekiston, Toshkent</span>
               </div>
             </div>
 
             <div class="route-arrow">
-             <IconsArrow/>
+              <IconsArrow />
             </div>
 
             <div class="route-item">
               <div class="route-icon">
-                <IconsPilot2/>
+                <IconsPilot2 />
                 <span class="route-label">Borish</span>
               </div>
               <div class="route-details">
@@ -43,10 +40,8 @@
             </div>
           </div>
 
+          <div class="divider"></div>
 
-        <div class="divider"></div>
-
-          <!-- Form -->
           <form @submit.prevent="handleSubmit" class="booking-form">
             <div class="form-group">
               <label for="name" class="form-label">Ism</label>
@@ -83,7 +78,7 @@
               />
             </div>
 
-           <UiButton>Yuborish</UiButton>
+            <UiButton type="submit">Yuborish</UiButton>
           </form>
         </div>
       </div>
@@ -92,18 +87,38 @@
 </template>
 
 <script setup lang="ts">
+interface FormData {
+  name: string
+  phone: string
+  note: string
+}
 
+interface Props {
+  modelValue: boolean
+}
 
-const formData = ref<any>({
+interface Emits {
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'submit', data: FormData): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const formData = ref<FormData>({
   name: '',
   phone: '',
   note: ''
-});
+})
 
+const closeModal = () => {
+  emit('update:modelValue', false)
+}
 
 const handleSubmit = async () => {
-  console.log(formData.value);
-};
+  emit('submit', formData.value)
+  closeModal()
+}
 </script>
 
 <style scoped lang="scss">
@@ -279,7 +294,6 @@ const handleSubmit = async () => {
   }
 }
 
-// Modal transitions
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease;

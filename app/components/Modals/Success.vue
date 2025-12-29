@@ -1,8 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div class="modal-overlay">
-        <div class="booking-modal">
+      <div v-if="modelValue" class="modal-overlay" @click="closeModal">
+        <div class="booking-modal" @click.stop>
           <div class="modal-success__icon">
             <IconsSuccess />
           </div>
@@ -11,7 +11,7 @@
             Bizning menedjerlar tez orqada siz bilan aloqaga chiqishadi. Rahmat
           </p>
           <div class="modal-success__btn">
-            <UiButton> Tushunarli </UiButton>
+            <UiButton @click="closeModal">Tushunarli</UiButton>
           </div>
         </div>
       </div>
@@ -19,7 +19,22 @@
   </Teleport>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+interface Props {
+  modelValue: boolean
+}
+
+interface Emits {
+  (e: 'update:modelValue', value: boolean): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const closeModal = () => {
+  emit('update:modelValue', false)
+}
+</script>
 
 <style scoped lang="scss">
 .modal-overlay {
