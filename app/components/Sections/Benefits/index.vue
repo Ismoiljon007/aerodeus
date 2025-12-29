@@ -16,16 +16,22 @@ import BenefitsCards from './benefitsCards.vue';
 
 <style scoped lang="scss">
 .benefits {
-    background-image: url('../../../assets/images/jpg/benBg.jpg');
+    background-image: url('../../../../public/images/jpg/benBg.jpg');
     padding: 90px 0;
+
     .benefits-wrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 25px;
+
         h2 {
             font-weight: 500;
             font-size: 40px;
+
+            @include respond(750px) {
+                font-size: 35px;
+            }
         }
     }
 }

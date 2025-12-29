@@ -1,7 +1,15 @@
 <template>
   <main>
-    <!-- <SectionsHero /> -->
+    <SectionsHero />
+    <SectionsBooking />
+    <SectionsPartners />
     <SectionsBenefits/>
+    <SectionsOurServices/>
+    <SectionsBusinessAviation/>
+    <SectionsFlights/>
+    <SectionsVip/>
+    <SectionsHowWeWork/>
+    <SectionsAboutUs/>
   </main>
 </template>
 
