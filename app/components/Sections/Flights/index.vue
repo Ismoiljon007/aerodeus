@@ -11,19 +11,23 @@
     </div>
 
     <div class="flights__slider">
-      <div class="flights__overlay flights__overlay--left" />
+      <div
+        v-if="showOverlays"
+        class="flights__overlay flights__overlay--left"
+      />
 
-      <div class="flights__overlay flights__overlay--right" />
-
-      <pre>{{ props.aircrcraft }}</pre>
+      <div
+        v-if="showOverlays"
+        class="flights__overlay flights__overlay--right"
+      />
 
       <Swiper
+        v-if="duplicatedFlights.length > 0"
         :modules="modules"
         effect="coverflow"
         :grab-cursor="true"
         :centered-slides="true"
-        slides-per-view="auto"
-        :centered-slides-bounds="true"
+        :loop="true"
         :coverflow-effect="{
           rotate: 0,
           stretch: 0,
@@ -39,26 +43,32 @@
           320: {
             slidesPerView: 1.2,
             spaceBetween: 40,
+            centeredSlides: true,
           },
           480: {
             slidesPerView: 1.5,
             spaceBetween: 40,
+            centeredSlides: true,
           },
           640: {
             slidesPerView: 2,
             spaceBetween: 40,
+            centeredSlides: true,
           },
           768: {
-            slidesPerView: 3,
+            slidesPerView: 2.5,
             spaceBetween: 40,
+            centeredSlides: true,
           },
           1024: {
-            slidesPerView: 4,
+            slidesPerView: 3,
             spaceBetween: 30,
+            centeredSlides: true,
           },
           1280: {
-            slidesPerView: 4,
-            spaceBetween: 30,
+            slidesPerView: 4.5,
+            spaceBetween: 40,
+            centeredSlides: true,
           },
         }"
         class="flights__swiper"
@@ -66,8 +76,8 @@
         @slide-change="onSlideChange"
       >
         <SwiperSlide
-          v-for="(flight, index) in aircrcraft?.data"
-          :key="index"
+          v-for="(flight, index) in duplicatedFlights"
+          :key="`flight-${index}`"
           v-slot="{ isActive }"
         >
           <article class="flight-card">
@@ -106,7 +116,17 @@
         </SwiperSlide>
       </Swiper>
 
-      <div class="flights__navigation">
+      <div
+        v-else
+        class="flights__empty"
+      >
+        <p>Hozircha ma'lumot yo'q</p>
+      </div>
+
+      <div
+        v-if="duplicatedFlights.length > 1"
+        class="flights__navigation"
+      >
         <button class="flights__nav-button flights__nav-button--prev">
           <IconsArrowLeft />
         </button>
@@ -132,6 +152,34 @@ const modules = [Navigation, EffectCoverflow];
 
 const swiperInstance = ref<SwiperType | null>(null);
 const activeIndex = ref(0);
+
+// Ma'lumotni duplicate qilish
+const duplicatedFlights = computed(() => {
+  const data = props.aircrcraft?.data || [];
+
+  if (data.length === 0) {
+    return [];
+  }
+
+  // 5 tadan kam bo'lsa - 3 marta takrorla
+  if (data.length < 5) {
+    return [...data, ...data, ...data];
+  }
+
+  // 7 tadan kam bo'lsa - 2 marta takrorla
+  if (data.length < 7) {
+    return [...data, ...data];
+  }
+
+  // 7 va undan ko'p bo'lsa - oddiy qaytarish
+  return data;
+});
+
+// Overlay ko'rsatish
+const showOverlays = computed(() => {
+  const dataLength = props.aircrcraft?.data?.length || 0;
+  return dataLength > 4;
+});
 
 function onSwiper(swiper: SwiperType) {
   swiperInstance.value = swiper;
@@ -184,6 +232,13 @@ function onSlideChange(swiper: SwiperType) {
     position: relative;
   }
 
+  &__empty {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 18px;
+    opacity: 0.7;
+  }
+
   &__overlay {
     position: absolute;
     top: 0;
@@ -209,7 +264,7 @@ function onSlideChange(swiper: SwiperType) {
     &--right {
       width: 150px;
       right: 0;
-   background: linear-gradient(90deg, rgba(14, 21, 48, 0) 0%, #0E1530 100%);
+      background: linear-gradient(90deg, rgba(14, 21, 48, 0) 0%, #0E1530 100%);
     }
   }
 
@@ -219,6 +274,7 @@ function onSlideChange(swiper: SwiperType) {
     justify-content: center;
     gap: 30px;
     margin-top: 40px;
+
     @media (max-width: 768px) {
       gap: 18px;
     }
@@ -261,6 +317,10 @@ function onSlideChange(swiper: SwiperType) {
       }
     }
   }
+
+  &__swiper {
+    overflow: visible !important;
+  }
 }
 
 .flight-card {
@@ -277,6 +337,7 @@ function onSlideChange(swiper: SwiperType) {
     width: 100%;
     height: 265px;
     overflow: hidden;
+
     @media (max-width: 768px) {
       height: 200px;
     }
@@ -306,6 +367,7 @@ function onSlideChange(swiper: SwiperType) {
     color: #ffffff;
     margin-bottom: 20px;
     line-height: normal;
+
     @media (max-width: 768px) {
       font-size: 18px;
     }
@@ -323,14 +385,17 @@ function onSlideChange(swiper: SwiperType) {
     gap: 12px;
     margin-bottom: 12px;
   }
-  &__feature--text{
+
+  &__feature--text {
     font-size: 16px !important;
     opacity: 0.8 !important;
     font-weight: normal;
+
     @media (max-width: 768px) {
       font-size: 14px !important;
     }
   }
+
   &__feature.active * {
     stroke: #def900;
     opacity: 1;

@@ -202,6 +202,14 @@
               </button>
             </div>
           </div>
+          <UiButton>
+            <svg
+              height="38"
+              width="38"
+            >
+              <use xlink:href="/sprite.svg#i-search" />
+            </svg>
+          </UiButton>
         </div>
       </UiCard>
     </div>
@@ -274,7 +282,8 @@ onMounted(() => {
   gsap.registerPlugin(ScrollTrigger);
   const cardEl = cardRef.value as any;
   const cardRoot = cardEl?.$el || cardEl;
-  if (!cardRoot) return;
+  if (!cardRoot)
+    return;
 
   bookingContext = gsap.context(() => {
     const q = gsap.utils.selector(cardRoot);

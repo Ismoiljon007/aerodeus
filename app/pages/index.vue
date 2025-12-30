@@ -35,7 +35,7 @@ const { data: services } = await useAsyncData(
 );
 const { data: aircrcraft } = await useAsyncData(
   'aircrcraft',
-  async () => apiFetch('/aircrcraft/', { params: { lang: locale.value } }),
+  async () => apiFetch('/aircraft/', { params: { lang: locale.value } }),
   { watch: [locale] },
 );
 const { data: statistics } = await useAsyncData(
