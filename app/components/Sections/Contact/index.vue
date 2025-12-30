@@ -1,5 +1,8 @@
 <template>
-  <section class="contact-section">
+  <section
+    id="contact"
+    class="contact-section"
+  >
     <div class="container">
       <UiCard class="contact-section__content">
         <div class="contact-section__header">
@@ -95,7 +98,10 @@
               <p class="contact-info__label">
                 {{ $t('contact.info.address') }}
               </p>
-              <p class="contact-info__value" v-html="$t('contact.info.addressValue')">
+              <p
+                class="contact-info__value"
+              >
+                {{ settings?.data?.address }}
               </p>
             </div>
           </div>
@@ -109,7 +115,7 @@
                 {{ $t('contact.info.contacts') }}
               </p>
               <p class="contact-info__value">
-                +998 33 850 22 22
+                {{ settings?.data?.phone_primary }}
               </p>
             </div>
           </div>
@@ -123,7 +129,7 @@
                 {{ $t('contact.info.email') }}
               </p>
               <p class="contact-info__value">
-                info@jetsoneair.com
+                {{ settings?.data?.email }}
               </p>
             </div>
           </div>
@@ -136,6 +142,12 @@
 </template>
 
 <script setup lang="ts">
+const { locale } = useI18n();
+const { data: settings } = await useAsyncData(
+  'settings',
+  async () => apiFetch('/settings/', { params: { lang: locale.value } }),
+  { watch: [locale] },
+);
 interface FormData {
   name: string
   email: string
@@ -153,7 +165,6 @@ const showSuccessModal = ref(false);
 const errorMessage = ref('');
 
 const config = useRuntimeConfig();
-const { locale, t } = useI18n();
 
 async function handleSubmit() {
   try {
@@ -362,6 +373,7 @@ async function handleSubmit() {
     font-weight: 500;
     line-height: 140%;
     margin-top: 10px;
+    max-width: 400px;
   }
 }
 </style>

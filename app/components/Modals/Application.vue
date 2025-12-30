@@ -1,14 +1,26 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="closeModal">
-        <div class="booking-modal" @click.stop>
-          <button class="close-btn" @click="closeModal">
+      <div
+        v-if="modelValue"
+        class="modal-overlay"
+        @click="closeModal"
+      >
+        <div
+          class="booking-modal"
+          @click.stop
+        >
+          <button
+            class="close-btn"
+            @click="closeModal"
+          >
             <IconsClose />
           </button>
 
           <div class="modal-header">
-            <h2 class="modal-title">{{ $t('modal.application.title') }}</h2>
+            <h2 class="modal-title">
+              {{ $t('modal.application.title') }}
+            </h2>
             <p class="modal-subtitle">
               {{ $t('modal.application.subtitle') }}
             </p>
@@ -19,15 +31,21 @@
               {{ $t('modal.application.aircraft') }}
             </p>
             <p class="modal-info__subtitle">
-              {{ $t('modal.application.aircraftName') }}
+              {{ aircraftData?.title || $t('modal.application.aircraftName') }}
             </p>
           </div>
 
-          <div class="divider"></div>
+          <div class="divider" />
 
-          <form @submit.prevent="handleSubmit" class="booking-form">
+          <form
+            class="booking-form"
+            @submit.prevent="handleSubmit"
+          >
             <div class="form-group">
-              <label for="name" class="form-label">{{ $t('modal.form.name') }}</label>
+              <label
+                for="name"
+                class="form-label"
+              >{{ $t('modal.form.name') }}</label>
               <input
                 id="name"
                 v-model="formData.name"
@@ -35,33 +53,44 @@
                 class="form-input"
                 :placeholder="$t('modal.form.placeholder')"
                 required
-              />
+              >
             </div>
 
             <div class="form-group">
-              <label for="phone" class="form-label">{{ $t('modal.form.phone') }}</label>
+              <label
+                for="email"
+                class="form-label"
+              >{{ $t('contact.form.email') }}</label>
               <input
-                id="phone"
-                v-model="formData.phone"
-                type="tel"
+                id="email"
+                v-model="formData.email"
+                type="email"
                 class="form-input"
                 :placeholder="$t('modal.form.placeholder')"
                 required
-              />
+              >
             </div>
 
             <div class="form-group">
-              <label for="note" class="form-label">{{ $t('modal.form.note') }}</label>
+              <label
+                for="note"
+                class="form-label"
+              >{{ $t('modal.form.note') }}</label>
               <textarea
                 id="note"
-                v-model="formData.note"
+                v-model="formData.message"
                 class="form-input form-textarea"
                 :placeholder="$t('modal.form.placeholder')"
                 rows="3"
               />
             </div>
 
-            <UiButton type="submit">{{ $t('modal.form.submit') }}</UiButton>
+            <UiButton
+              type="submit"
+              :disabled="isLoading"
+            >
+              {{ isLoading ? $t('contact.form.submitting') : $t('modal.form.submit') }}
+            </UiButton>
           </form>
         </div>
       </div>
@@ -72,35 +101,76 @@
 <script setup lang="ts">
 interface FormData {
   name: string
-  phone: string
-  note: string
+  email: string
+  message: string
+}
+
+interface AircraftData {
+  id: number
+  title: string
+  [key: string]: any
 }
 
 interface Props {
   modelValue: boolean
+  aircraftData?: AircraftData
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'submit', data: FormData): void
+  (e: 'success'): void
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
+
+const config = useRuntimeConfig();
+const { locale } = useI18n();
 
 const formData = ref<FormData>({
   name: '',
-  phone: '',
-  note: ''
-})
+  email: '',
+  message: '',
+});
 
-const closeModal = () => {
-  emit('update:modelValue', false)
+const isLoading = ref(false);
+
+function closeModal() {
+  emit('update:modelValue', false);
+  // Reset form
+  formData.value = {
+    name: '',
+    email: '',
+    message: '',
+  };
 }
 
-const handleSubmit = async () => {
-  emit('submit', formData.value)
-  closeModal()
+async function handleSubmit() {
+  try {
+    isLoading.value = true;
+
+    await $fetch(`${config.public.apiBase}/applications/create/`, {
+      method: 'POST',
+      body: {
+        aircraft_id: props.aircraftData?.id,
+        customer_name: formData.value.name,
+        customer_email: formData.value.email,
+        notes: formData.value.message || '',
+      },
+      params: {
+        lang: locale.value,
+      },
+    });
+
+    closeModal();
+    emit('success');
+  } catch (error: any) {
+    console.error('Application submission error:', error);
+    // eslint-disable-next-line no-alert
+    alert(error?.data?.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.');
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 
@@ -185,7 +255,7 @@ const handleSubmit = async () => {
     font-size: 16px;
     font-weight: 500;
     color: #ffffff;
-  } 
+  }
 }
 
 .booking-form {
@@ -283,6 +353,6 @@ const handleSubmit = async () => {
   border-image-source: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 48.08%, rgba(255, 255, 255, 0) 100%);
   border-image-slice: 1;
   width: 100%;
-  height: 0; 
+  height: 0;
 }
 </style>

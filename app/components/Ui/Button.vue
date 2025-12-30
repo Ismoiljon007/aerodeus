@@ -1,24 +1,35 @@
 <template>
   <button
+    v-if="!props.to"
     class="btn"
     :class="[variantClass, iconClass]"
   >
     <slot />
   </button>
+  <NuxtLink
+    v-else
+    :to="localePath(props.to)"
+    class="btn"
+    :class="[variantClass, iconClass]"
+  >
+    <slot />
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 
-interface Props {
-  variant?: 'primary' | 'secondary'
-  icon?: boolean | 'rounded'
-}
-
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
   icon: false,
+  to: '',
 });
+const localePath = useLocalePath();
+interface Props {
+  variant?: 'primary' | 'secondary'
+  icon?: boolean | 'rounded'
+  to?: string
+}
 
 const variantClass = computed(() => `btn--${props.variant}`);
 
@@ -40,6 +51,7 @@ const iconClass = computed(() => {
   align-items: center;
   justify-content: center;
   text-align: center;
+  text-decoration: none;
   gap: 1rem;
   font-weight: 400;
   border: none;

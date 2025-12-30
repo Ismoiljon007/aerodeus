@@ -71,6 +71,7 @@ onBeforeUnmount(() => {
         align-items: center;
         justify-content: center;
         gap: 5rem;
+        flex-wrap: wrap;
     }
     &_logo {
       will-change: transform;

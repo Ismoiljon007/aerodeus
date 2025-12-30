@@ -1,5 +1,6 @@
 <template>
   <div
+    id="advantages"
     ref="benefitsRef"
     class="benefits"
   >
@@ -15,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import BenefitsCards from './benefitsCards.vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import BenefitsCards from './benefitsCards.vue';
 
 defineProps<{ advantages?: any }>();
 
@@ -27,7 +28,8 @@ let benefitsContext: gsap.Context | null = null;
 onMounted(() => {
   gsap.registerPlugin(ScrollTrigger);
   const sectionEl = benefitsRef.value;
-  if (!sectionEl) return;
+  if (!sectionEl)
+    return;
 
   benefitsContext = gsap.context(() => {
     const q = gsap.utils.selector(sectionEl);

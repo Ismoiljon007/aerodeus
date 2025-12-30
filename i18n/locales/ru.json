@@ -29,6 +29,8 @@
     "passengers": "Количество пассажиров",
     "passengersCount": "{count} человек",
     "select": "Выберите",
+    "selectLocations": "Пожалуйста, выберите пункты отправления и прибытия",
+    "selectDate": "Пожалуйста, выберите дату вылета",
     "locations": {
       "tashkent": "Ташкент",
       "samarkand": "Самарканд",

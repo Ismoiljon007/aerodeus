@@ -5,33 +5,37 @@
         class="site-logo"
         to="/"
       >
-        <svg
+        <!-- <svg
           height="80"
           width="133"
         >
           <use xlink:href="/sprite.svg#i-logo" />
-        </svg>
+        </svg> -->
+        <img
+          :src="settings?.data?.logo"
+          alt=""
+        >
       </NuxtLink>
       <div class="site-footer_center">
         <nav class="sitenav">
           <ul>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#services')">
                 {{ $t('navbar.services') }}
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#advantages')">
                 {{ $t('navbar.advantages') }}
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#fleet')">
                 {{ $t('navbar.fleet') }}
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#how-we-work')">
                 {{ $t('navbar.howWeWork') }}
               </NuxtLink>
             </li>
@@ -40,15 +44,21 @@
         <small>{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</small>
       </div>
       <div class="site-footer_social">
-        <a href="#">
+        <a
+          v-if="settings?.data?.telegram"
+          :href="settings?.data?.telegram"
+        >
           <svg
             height="25"
             width="25"
           >
-            <use xlink:href="/sprite.svg#i-whatsapp" />
+            <use xlink:href="/sprite.svg#i-telegram" />
           </svg>
         </a>
-        <a href="#">
+        <a
+          v-if="settings?.data?.instagram"
+          :href="settings?.data?.instagram"
+        >
           <svg
             height="25"
             width="25"
@@ -56,12 +66,48 @@
             <use xlink:href="/sprite.svg#i-instagram" />
           </svg>
         </a>
-        <a href="#">
+        <a
+          v-if="settings?.data?.facebook"
+          :href="settings?.data?.facebook"
+        >
           <svg
             height="25"
             width="25"
           >
-            <use xlink:href="/sprite.svg#i-telegram" />
+            <use xlink:href="/sprite.svg#i-facebook" />
+          </svg>
+        </a>
+        <a
+          v-if="settings?.data?.youtube"
+          :href="settings?.data?.youtube"
+        >
+          <svg
+            height="25"
+            width="25"
+          >
+            <use xlink:href="/sprite.svg#i-youtube" />
+          </svg>
+        </a>
+        <a
+          v-if="settings?.data?.linkedin"
+          :href="settings?.data?.linkedin"
+        >
+          <svg
+            height="25"
+            width="25"
+          >
+            <use xlink:href="/sprite.svg#i-linkedin" />
+          </svg>
+        </a>
+        <a
+          v-if="settings?.data?.twitter"
+          :href="settings?.data?.twitter"
+        >
+          <svg
+            height="25"
+            width="25"
+          >
+            <use xlink:href="/sprite.svg#i-twitter" />
           </svg>
         </a>
       </div>
@@ -70,7 +116,13 @@
 </template>
 
 <script setup lang="ts">
+const { locale } = useI18n();
 const localePath = useLocalePath();
+const { data: settings } = await useAsyncData(
+  'settings',
+  async () => apiFetch('/settings/', { params: { lang: locale.value } }),
+  { watch: [locale] },
+);
 </script>
 
 <style scoped lang="scss">

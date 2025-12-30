@@ -29,6 +29,8 @@
     "passengers": "Odam soni",
     "passengersCount": "{count} kishi",
     "select": "Tanlang",
+    "selectLocations": "Iltimos, ketish va kelish manzillarini tanlang",
+    "selectDate": "Iltimos, uchish sanasini tanlang",
     "locations": {
       "tashkent": "Toshkent",
       "samarkand": "Samarqand",

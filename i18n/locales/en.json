@@ -29,6 +29,8 @@
     "passengers": "Passengers",
     "passengersCount": "{count} person | {count} people",
     "select": "Select",
+    "selectLocations": "Please select departure and arrival locations",
+    "selectDate": "Please select flight date",
     "locations": {
       "tashkent": "Tashkent",
       "samarkand": "Samarkand",

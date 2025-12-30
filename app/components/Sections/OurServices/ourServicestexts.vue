@@ -13,7 +13,10 @@
       >
         <UiButton>{{ serviceButtonText }}</UiButton>
       </NuxtLink>
-      <UiButton v-else>
+      <UiButton
+        v-else
+        to="/#booking"
+      >
         {{ serviceButtonText }}
       </UiButton>
 

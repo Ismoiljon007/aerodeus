@@ -1,5 +1,8 @@
 <template>
-  <section class="booking">
+  <section
+    id="booking"
+    class="booking"
+  >
     <div class="container">
       <UiCard
         ref="cardRef"
@@ -150,7 +153,10 @@
           >
             <span class="booking_field-text">
               <span class="booking_field-label">{{ $t('booking.date') }}</span>
-              <input type="date">
+              <input
+                v-model="departureDate"
+                type="datetime-local"
+              >
             </span>
           </label>
 
@@ -202,7 +208,7 @@
               </button>
             </div>
           </div>
-          <UiButton>
+          <UiButton @click="handleSearch">
             <svg
               height="38"
               width="38"
@@ -213,6 +219,13 @@
         </div>
       </UiCard>
     </div>
+
+    <ModalsBooking
+      v-model="showBookingModal"
+      :booking-data="bookingData"
+      @success="handleBookingSuccess"
+    />
+    <ModalsSuccess v-model="showSuccessModal" />
   </section>
 </template>
 
@@ -226,7 +239,10 @@ const { t } = useI18n();
 
 const tripType = ref<TripType>('one_way');
 const passengerCount = ref<number>(1);
+const departureDate = ref<string>('');
 const cardRef = ref<HTMLElement | null>(null);
+const showBookingModal = ref(false);
+const showSuccessModal = ref(false);
 let bookingContext: gsap.Context | null = null;
 const locationKeys = [
   'tashkent',
@@ -246,6 +262,14 @@ const locations = computed(() =>
 );
 const fromLocation = ref<string>('');
 const toLocation = ref<string>('');
+
+const bookingData = computed(() => ({
+  tripType: tripType.value,
+  from: fromLocation.value,
+  to: toLocation.value,
+  departureDate: departureDate.value,
+  passengersCount: passengerCount.value,
+}));
 
 const isFromOpen = ref<boolean>(false);
 const isToOpen = ref<boolean>(false);
@@ -284,6 +308,24 @@ function decrementPassengers() {
   if (passengerCount.value > 1) {
     passengerCount.value--;
   }
+}
+
+function handleSearch() {
+  // Validate form data
+  if (!fromLocation.value || !toLocation.value) {
+    alert(t('booking.selectLocations') || 'Iltimos, ketish va kelish manzillarini tanlang');
+    return;
+  }
+  if (!departureDate.value) {
+    alert(t('booking.selectDate') || 'Iltimos, uchish sanasini tanlang');
+    return;
+  }
+
+  showBookingModal.value = true;
+}
+
+function handleBookingSuccess() {
+  showSuccessModal.value = true;
 }
 
 onMounted(() => {

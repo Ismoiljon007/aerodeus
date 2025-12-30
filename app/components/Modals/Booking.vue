@@ -33,7 +33,7 @@
                 <span class="route-label">{{ $t('modal.booking.departure') }}</span>
               </div>
               <div class="route-details">
-                <span class="route-location">{{ $t('modal.booking.departureLocation') }}</span>
+                <span class="route-location">{{ bookingData?.from || $t('modal.booking.departureLocation') }}</span>
               </div>
             </div>
 
@@ -47,7 +47,7 @@
                 <span class="route-label">{{ $t('modal.booking.arrival') }}</span>
               </div>
               <div class="route-details">
-                <span class="route-location">{{ $t('modal.booking.arrivalLocation') }}</span>
+                <span class="route-location">{{ bookingData?.to || $t('modal.booking.arrivalLocation') }}</span>
               </div>
             </div>
           </div>
@@ -67,6 +67,21 @@
                 id="name"
                 v-model="formData.name"
                 type="text"
+                class="form-input"
+                :placeholder="$t('modal.form.placeholder')"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label
+                for="email"
+                class="form-label"
+              >{{ $t('contact.form.email') }}</label>
+              <input
+                id="email"
+                v-model="formData.email"
+                type="email"
                 class="form-input"
                 :placeholder="$t('modal.form.placeholder')"
                 required
@@ -102,8 +117,11 @@
               />
             </div>
 
-            <UiButton type="submit">
-              {{ $t('modal.form.submit') }}
+            <UiButton
+              type="submit"
+              :disabled="isLoading"
+            >
+              {{ isLoading ? $t('contact.form.submitting') : $t('modal.form.submit') }}
             </UiButton>
           </form>
         </div>
@@ -115,35 +133,85 @@
 <script setup lang="ts">
 interface FormData {
   name: string
+  email: string
   phone: string
   note: string
 }
 
+interface BookingData {
+  tripType: string
+  from: string
+  to: string
+  departureDate: string
+  passengersCount: number
+}
+
 interface Props {
   modelValue: boolean
+  bookingData?: BookingData
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'submit', data: FormData): void
+  (e: 'success'): void
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
+const config = useRuntimeConfig();
+const { locale } = useI18n();
+
 const formData = ref<FormData>({
   name: '',
+  email: '',
   phone: '',
   note: '',
 });
 
+const isLoading = ref(false);
+
 function closeModal() {
   emit('update:modelValue', false);
+  // Reset form
+  formData.value = {
+    name: '',
+    email: '',
+    phone: '',
+    note: '',
+  };
 }
 
 async function handleSubmit() {
-  emit('submit', formData.value);
-  closeModal();
+  try {
+    isLoading.value = true;
+
+    await $fetch(`${config.public.apiBase}/bookings/create/`, {
+      method: 'POST',
+      body: {
+        trip_type: props.bookingData?.tripType,
+        departure_location: props.bookingData?.from,
+        arrival_location: props.bookingData?.to,
+        departure_datetime: props.bookingData?.departureDate,
+        passengers_count: props.bookingData?.passengersCount,
+        customer_name: formData.value.name,
+        customer_email: formData.value.email,
+        customer_phone: formData.value.phone,
+        notes: formData.value.note || '',
+      },
+      params: {
+        lang: locale.value,
+      },
+    });
+
+    closeModal();
+    emit('success');
+  } catch (error: any) {
+    console.error('Booking submission error:', error);
+    alert(error?.data?.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.');
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 

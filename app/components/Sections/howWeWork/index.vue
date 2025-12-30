@@ -1,5 +1,8 @@
 <template>
-  <div class="how-we-work">
+  <div
+    id="how-we-work"
+    class="how-we-work"
+  >
     <div class="container">
       <div class="how-we-work-wrapper">
         <div class="how-we-wrok-text-wrapper">

@@ -25,7 +25,10 @@
         >
           {{ hero?.data?.subtitle || 'Premium xususiy samolyotlar bilan mutlaq qulaylik va nufuz' }}
         </p>
-        <UiButton class="hero_button">
+        <UiButton
+          class="hero_button"
+          to="/#services"
+        >
           {{ $t('navbar.services') }}
         </UiButton>
       </div>

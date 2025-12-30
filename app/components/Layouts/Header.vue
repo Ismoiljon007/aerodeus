@@ -41,12 +41,12 @@
         <nav class="sitenav">
           <ul>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#services')">
                 {{ $t('navbar.services') }}
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#advantages')">
                 {{ $t('navbar.advantages') }}
               </NuxtLink>
             </li>
@@ -66,12 +66,12 @@
         <nav class="sitenav">
           <ul>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#fleet')">
                 {{ $t('navbar.fleet') }}
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/')">
+              <NuxtLink :to="localePath('/#how-we-work')">
                 {{ $t('navbar.howWeWork') }}
               </NuxtLink>
             </li>
@@ -79,6 +79,7 @@
         </nav>
       </div>
       <UiButton
+        to="/#contact"
         variant="secondary"
         class="site-header_button"
       >

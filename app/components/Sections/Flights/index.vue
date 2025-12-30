@@ -1,5 +1,8 @@
 <template>
-  <div class="flights">
+  <div
+    id="fleet"
+    class="flights"
+  >
     <div class="flights__header">
       <h2 class="flights__title">
         {{ $t('sections.flights.title') }}
@@ -107,7 +110,10 @@
                 </li>
               </ul>
 
-              <UiButton :variant="isActive ? 'primary' : 'secondary'">
+              <UiButton
+                :variant="isActive ? 'primary' : 'secondary'"
+                @click="openApplicationModal(flight)"
+              >
                 {{ $t('sections.flights.submitApplication') }}
               </UiButton>
             </div>
@@ -134,6 +140,12 @@
         </button>
       </div>
     </div>
+
+    <ModalsApplication
+      v-model="showApplicationModal"
+      @success="handleApplicationSuccess"
+    />
+    <ModalsSuccess v-model="showSuccessModal" />
   </div>
 </template>
 
@@ -179,6 +191,18 @@ const showOverlays = computed(() => {
   const dataLength = props.aircrcraft?.data?.length || 0;
   return dataLength > 4;
 });
+
+// Application modal state
+const showApplicationModal = ref(false);
+const showSuccessModal = ref(false);
+
+function openApplicationModal(_aircraft: any) {
+  showApplicationModal.value = true;
+}
+
+function handleApplicationSuccess() {
+  showSuccessModal.value = true;
+}
 
 function onSwiper(swiper: SwiperType) {
   swiperInstance.value = swiper;
