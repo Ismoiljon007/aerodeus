@@ -15,10 +15,6 @@ export default defineNuxtConfig({
     payloadExtraction: true,
   },
 
-  routeRules: {
-    '/': { swr: 3600 }, // Cache home page for 1 hour
-  },
-
   nitro: {
     compressPublicAssets: true,
     prerender: {
