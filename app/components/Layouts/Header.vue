@@ -28,12 +28,12 @@
           class="lang_list"
         >
           <NuxtLink
-            v-for="locale in availableLocales"
-            :key="locale.code"
-            :to="switchLocalePath(locale.code)"
+            v-for="loc in availableLocales"
+            :key="loc.code"
+            :to="switchLocalePath(loc.code)"
             @click="openLang = false"
           >
-            {{ locale.name }}
+            {{ loc.name }}
           </NuxtLink>
         </div>
       </div>
@@ -55,6 +55,7 @@
         <NuxtLink
           class="site-logo"
           to="/"
+          aria-label="Aerodeus Home"
         >
           <svg
             height="80"
@@ -87,7 +88,7 @@
       </UiButton>
       <button
         class="site-header_menu"
-        @click="emit('toggle-menu')"
+        @click="emit('toggleMenu')"
       >
         <svg
           height="24"
@@ -104,7 +105,7 @@
 import { gsap } from 'gsap';
 
 const emit = defineEmits<{
-  (e: 'toggle-menu'): void
+  (e: 'toggleMenu'): void
 }>();
 const { locale, locales } = useI18n();
 const localePath = useLocalePath();
@@ -159,6 +160,8 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .site-header {
+  position: relative;
+  z-index: 2;
   padding: 2rem 0 0;
   background: $color-bg;
   @include respond(540px) {

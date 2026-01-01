@@ -75,7 +75,8 @@ const mainImage = computed(() => props.about?.data?.logo_image || '/images/png/a
 const mainImageAlt = computed(() => props.about?.data?.title || 'Biz haqimizda');
 const stats = computed(() => {
   const items = props.statistics?.data;
-  if (!Array.isArray(items)) return [];
+  if (!Array.isArray(items))
+    return [];
   return [...items]
     .slice()
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
@@ -266,7 +267,7 @@ onBeforeUnmount(() => {
 .about-us-left-img-and-cards {
     display: flex;
     gap: 20px;
-    
+
     @include respond(885px) {
         align-items: center;
         flex-direction: column;
@@ -288,6 +289,7 @@ onBeforeUnmount(() => {
     position: relative;
 
     @include respond(885px) {
+        height: auto;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;

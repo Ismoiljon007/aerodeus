@@ -1,17 +1,28 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="closeModal">
-        <div class="booking-modal" @click.stop>
+      <div
+        v-if="modelValue"
+        class="modal-overlay"
+        @click="closeModal"
+      >
+        <div
+          class="booking-modal"
+          @click.stop
+        >
           <div class="modal-success__icon">
             <IconsSuccess />
           </div>
-          <h1 class="modal-success__title">{{ $t('modal.success.title') }}</h1>
+          <h1 class="modal-success__title">
+            {{ $t('modal.success.title') }}
+          </h1>
           <p class="modal-success__subtitle">
             {{ $t('modal.success.subtitle') }}
           </p>
           <div class="modal-success__btn">
-            <UiButton @click="closeModal">{{ $t('modal.success.button') }}</UiButton>
+            <UiButton @click="closeModal">
+              {{ $t('modal.success.button') }}
+            </UiButton>
           </div>
         </div>
       </div>
@@ -28,11 +39,11 @@ interface Emits {
   (e: 'update:modelValue', value: boolean): void
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineProps<Props>();
+const emit = defineEmits<Emits>();
 
-const closeModal = () => {
-  emit('update:modelValue', false)
+function closeModal() {
+  emit('update:modelValue', false);
 }
 </script>
 

@@ -21,7 +21,7 @@ import HowWeWorkCards from './howWeWorkCards.vue';
 
 defineProps<{
   howWeWork?: any
-  howWeWorkSteps?: any[]
+  howWeWorkSteps?: any
 }>();
 </script>
 

@@ -3,7 +3,7 @@
     <NuxtPicture
       src="/images/jpg/hero.jpg"
       format="webp"
-      quality="100"
+      quality="80"
       preload
       loading="eager"
       width="100%"
@@ -39,6 +39,8 @@
         src="/images/png/plane.png"
         class="hero_img"
         alt="Samolyot"
+        loading="eager"
+        :img-attrs="{ style: 'aspect-ratio: 1105/467' }"
       />
     </div>
   </section>
@@ -72,12 +74,11 @@ onMounted(() => {
     gsap.set(target, { transformOrigin: '50% 50%' });
     introTween = gsap.fromTo(
       target,
-      { y: 20, scale: 0.7 },
+      { opacity: 0.8 },
       {
-        y: 0,
-        scale: 1,
-        duration: 1.2,
-        ease: 'power3.out',
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power2.out',
         onComplete: () => {
           gsap.to(target, {
             yPercent: -200,
@@ -214,8 +215,10 @@ onBeforeUnmount(() => {
   &_img {
     width: 110.5rem;
     height: auto;
+    aspect-ratio: 1105 / 467;
     will-change: transform;
     object-fit: contain;
+    contain: layout style;
     @include respond(1470px) {
       width: 90rem;
     }

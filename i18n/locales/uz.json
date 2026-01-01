@@ -1,4 +1,9 @@
 {
+  "seo": {
+    "title": "Aerodeus - Premium Xususiy Charter Parvozlari",
+    "description": "Aerodeus bilan hashamatli xususiy charter parvozlarini bron qiling. Premium aviatsiya xizmatlari, shaxsiylashtirilgan sayohat yechimlari va jahon darajasidagi qulaylik.",
+    "keywords": "xususiy samolyot, charter parvoz, hashamatli aviatsiya, VIP parvozlar, biznes jet, O'zbekiston charter, samolyot ijarasi"
+  },
   "contact": {
     "title": "Biz bilan aloqa",
     "subtitle": "Ma'lumotlarni qoldiring va biz imkon qadar tezroq siz bilan bog'lanamiz",
@@ -26,11 +31,14 @@
     "from": "Borish manzili",
     "to": "Kelish manzili",
     "date": "Uchish kun va soati",
+    "returnDate": "Qaytish kun va soati",
+    "selectReturnDate": "Iltimos, qaytish sanasini tanlang",
     "passengers": "Odam soni",
     "passengersCount": "{count} kishi",
     "select": "Tanlang",
     "selectLocations": "Iltimos, ketish va kelish manzillarini tanlang",
     "selectDate": "Iltimos, uchish sanasini tanlang",
+    "sameLocationError": "Ketish va borish manzili bir xil bo'lishi mumkin emas",
     "locations": {
       "tashkent": "Toshkent",
       "samarkand": "Samarqand",

@@ -142,9 +142,9 @@
 </template>
 
 <script setup lang="ts">
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 const { data: settings } = await useAsyncData(
-  'settings',
+  'contact-settings',
   async () => apiFetch('/settings/', { params: { lang: locale.value } }),
   { watch: [locale] },
 );
@@ -200,8 +200,8 @@ async function handleSubmit() {
   padding: 56px 0;
   margin-bottom: 100px;
   @media (max-width: 768px) {
-    padding: 38px;
-    margin-bottom: 30px;
+    padding: 0;
+    margin-bottom: 50px;
   }
 
   &__content {
@@ -366,6 +366,15 @@ async function handleSubmit() {
   &__label {
     color: #FFFFFFB2;
     line-height: 100%;
+    font-size: 16px;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
+
+    @media (max-width: 540px) {
+      font-size: 12px;
+    }
   }
 
   &__value {
@@ -374,6 +383,16 @@ async function handleSubmit() {
     line-height: 140%;
     margin-top: 10px;
     max-width: 400px;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 540px) {
+      font-size: 14px;
+      margin-top: 4px;
+    }
   }
 }
 </style>

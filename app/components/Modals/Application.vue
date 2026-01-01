@@ -125,7 +125,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const config = useRuntimeConfig();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const formData = ref<FormData>({
   name: '',
@@ -134,6 +134,7 @@ const formData = ref<FormData>({
 });
 
 const isLoading = ref(false);
+const errorMessage = ref('');
 
 function closeModal() {
   emit('update:modelValue', false);
@@ -149,13 +150,18 @@ async function handleSubmit() {
   try {
     isLoading.value = true;
 
-    await $fetch(`${config.public.apiBase}/applications/create/`, {
+    // Build message with aircraft info
+    let message = formData.value.message || '';
+    if (props.aircraftData?.title) {
+      message = `Samolyot: ${props.aircraftData.title}\n\n${message}`;
+    }
+
+    await $fetch(`${config.public.apiBase}/contact/`, {
       method: 'POST',
       body: {
-        aircraft_id: props.aircraftData?.id,
-        customer_name: formData.value.name,
-        customer_email: formData.value.email,
-        notes: formData.value.message || '',
+        name: formData.value.name,
+        email: formData.value.email,
+        message,
       },
       params: {
         lang: locale.value,
@@ -166,8 +172,17 @@ async function handleSubmit() {
     emit('success');
   } catch (error: any) {
     console.error('Application submission error:', error);
-    // eslint-disable-next-line no-alert
-    alert(error?.data?.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.');
+    const errorData = error?.data;
+    let errMsg = errorData?.message || t('contact.error');
+
+    if (errorData?.errors) {
+      const errorMessages = Object.values(errorData.errors).flat();
+      if (errorMessages.length > 0) {
+        errMsg = errorMessages.join('\n');
+      }
+    }
+
+    errorMessage.value = errMsg;
   } finally {
     isLoading.value = false;
   }

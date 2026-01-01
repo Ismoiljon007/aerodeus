@@ -1,20 +1,23 @@
+<template>
+  <div class="about-us">
+    <div class="container">
+      <div class="about-us-wrapper">
+        <AboutUsLeft
+          :about="about"
+          :statistics="statistics"
+        />
+        <AboutUsRight :about="about" />
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import AboutUsLeft from './aboutUsLeft.vue';
 import AboutUsRight from './aboutUsRight.vue';
 
-defineProps<{ about?: any; statistics?: any }>();
+defineProps<{ about?: any, statistics?: any }>();
 </script>
-
-<template>
-    <div class="about-us">
-        <div class="container">
-            <div class="about-us-wrapper">
-                <AboutUsLeft :about="about" :statistics="statistics" />
-                <AboutUsRight :about="about" />
-            </div>
-        </div>
-    </div>
-</template>
 
 <style scoped lang="scss">
     .about-us {

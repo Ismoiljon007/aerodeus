@@ -195,24 +195,6 @@ const PIN_SCALE = {
   fallback: 1,
 };
 
-const activeMarker = computed(() => (
-  markers.value.find(marker => marker.key === activeMarkerKey.value) ?? null
-));
-
-const tipTitle = computed(() => {
-  const marker = activeMarker.value;
-  if (!marker)
-    return '';
-  return marker.city.name;
-});
-
-const tipCountry = computed(() => {
-  const marker = activeMarker.value;
-  if (!marker)
-    return '';
-  return marker.city.country_name;
-});
-
 const routePaths = computed(() => {
   const paths: Array<{ key: string, d: string }> = [];
   for (const row of routes.value) {
@@ -242,6 +224,24 @@ const markers = computed<Marker[]>(() => {
     ...marker,
     scale: scaleForCity(marker.city),
   }));
+});
+
+const activeMarker = computed(() => (
+  markers.value.find(marker => marker.key === activeMarkerKey.value) ?? null
+));
+
+const tipTitle = computed(() => {
+  const marker = activeMarker.value;
+  if (!marker)
+    return '';
+  return marker.city.name;
+});
+
+const tipCountry = computed(() => {
+  const marker = activeMarker.value;
+  if (!marker)
+    return '';
+  return marker.city.country_name;
 });
 
 function updateWrapSize() {
@@ -589,6 +589,18 @@ onBeforeUnmount(() => {
         --map-to: #7bd5ff;
         margin-bottom: 16rem;
 
+        @include respond(1200px) {
+            margin-bottom: 12rem;
+        }
+
+        @include respond(768px) {
+            margin-bottom: 8rem;
+        }
+
+        @include respond(540px) {
+            margin-bottom: 5rem;
+        }
+
         color: var(--map-text);
         position: relative;
         overflow: hidden;
@@ -602,7 +614,19 @@ onBeforeUnmount(() => {
             position: absolute;
             top: 0;
             left: 0;
-            pointer-events: none; // Click eventlarni o'tkazish
+            pointer-events: none;
+
+            @include respond(1200px) {
+                height: 35rem;
+            }
+
+            @include respond(768px) {
+                height: 25rem;
+            }
+
+            @include respond(540px) {
+                height: 18rem;
+            }
         }
 
         &::before {
@@ -614,7 +638,19 @@ onBeforeUnmount(() => {
             position: absolute;
             bottom: 0;
             left: 0;
-            pointer-events: none; // Click eventlarni o'tkazish
+            pointer-events: none;
+
+            @include respond(1200px) {
+                height: 35rem;
+            }
+
+            @include respond(768px) {
+                height: 25rem;
+            }
+
+            @include respond(540px) {
+                height: 18rem;
+            }
         }
     }
 
@@ -623,8 +659,21 @@ onBeforeUnmount(() => {
         top: 0;
         left: 0;
         width: 100%;
+        height: 100%;
         z-index: -1;
         pointer-events: none;
+
+        // @include respond(1200px) {
+        //     height: 80%;
+        // }
+
+        // @include respond(768px) {
+        //     height: 70%;
+        // }
+
+        // @include respond(540px) {
+        //     height: 60%;
+        // }
     }
 
     :deep(.map__img) {
@@ -730,6 +779,18 @@ onBeforeUnmount(() => {
         height: 80rem;
         aspect-ratio: 1009.6727 / 665.96301;
         overflow: hidden;
+
+        @include respond(1200px) {
+            height: 60rem;
+        }
+
+        @include respond(768px) {
+            height: 45rem;
+        }
+
+        @include respond(540px) {
+            height: 35rem;
+        }
     }
 
     .map__host {

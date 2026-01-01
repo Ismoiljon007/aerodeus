@@ -110,6 +110,15 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .our-services {
     padding-bottom: 40px;
+
+    @include respond(768px) {
+      padding-bottom: 30px;
+    }
+
+    @include respond(540px) {
+      padding-bottom: 20px;
+    }
+
     .our-services-wrapper {
         @include respond(1200px) {
             display: flex;
@@ -118,10 +127,23 @@ onBeforeUnmount(() => {
             padding: 20px 0;
         }
 
+        @include respond(540px) {
+            padding: 10px 0;
+        }
+
         &__title {
             @include heading-1;
-           margin-bottom: 1.8rem;
+            margin-bottom: 1.8rem;
 
+            @include respond(768px) {
+              font-size: 3.2rem;
+              margin-bottom: 1.4rem;
+            }
+
+            @include respond(540px) {
+              font-size: 2.6rem;
+              margin-bottom: 1rem;
+            }
         }
 
         &__sub-title {
@@ -136,22 +158,35 @@ onBeforeUnmount(() => {
             @include respond(750px) {
                 font-size: 16px;
             }
+
+            @include respond(540px) {
+                font-size: 14px;
+            }
         }
 
         .images-and-texts-wrp {
             display: flex;
             gap: 9rem;
             padding: 50px 0;
-            @include respond(1270px) {
-              gap: 50px;
-            }
 
             @include respond(1270px) {
-                padding: 20px;
+              gap: 50px;
+              padding: 20px;
             }
 
             @include respond(1200px) {
                 flex-direction: column;
+                gap: 30px;
+            }
+
+            @include respond(768px) {
+                padding: 15px 0;
+                gap: 25px;
+            }
+
+            @include respond(540px) {
+                padding: 10px 0;
+                gap: 20px;
             }
         }
 

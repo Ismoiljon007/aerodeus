@@ -41,7 +41,7 @@
                 :class="{ open: isFromOpen }"
               >
                 <span class="booking_select-value">
-                  {{ fromLocation || $t('booking.select') }}
+                  {{ fromLocationName || $t('booking.select') }}
                 </span>
               </div>
             </button>
@@ -71,16 +71,16 @@
             <transition name="booking_select-fade">
               <ul
                 v-if="isFromOpen"
-                class="booking_select-options glass-dark"
+                class="booking_select-options"
               >
                 <li
                   v-for="location in locations"
-                  :key="`from-${location.key}`"
+                  :key="`from-${location.id}`"
                 >
                   <button
                     type="button"
                     class="booking_select-option"
-                    @click="selectFromLocation(location.name)"
+                    @click="selectFromLocation(location.id)"
                   >
                     {{ location.name }}
                   </button>
@@ -100,7 +100,7 @@
                 :class="{ open: isToOpen }"
               >
                 <span class="booking_select-value">
-                  {{ toLocation || $t('booking.select') }}
+                  {{ toLocationName || $t('booking.select') }}
                 </span>
               </div>
             </button>
@@ -130,16 +130,16 @@
             <transition name="booking_select-fade">
               <ul
                 v-if="isToOpen"
-                class="booking_select-options glass-dark"
+                class="booking_select-options"
               >
                 <li
                   v-for="location in locations"
-                  :key="`to-${location.key}`"
+                  :key="`to-${location.id}`"
                 >
                   <button
                     type="button"
                     class="booking_select-option"
-                    @click="selectToLocation(location.name)"
+                    @click="selectToLocation(location.id)"
                   >
                     {{ location.name }}
                   </button>
@@ -155,6 +155,20 @@
               <span class="booking_field-label">{{ $t('booking.date') }}</span>
               <input
                 v-model="departureDate"
+                type="datetime-local"
+              >
+            </span>
+          </label>
+
+          <label
+            v-show="tripType === 'round_trip'"
+            class="booking_field"
+            type="button"
+          >
+            <span class="booking_field-text">
+              <span class="booking_field-label">{{ $t('booking.returnDate') }}</span>
+              <input
+                v-model="returnDate"
                 type="datetime-local"
               >
             </span>
@@ -208,13 +222,18 @@
               </button>
             </div>
           </div>
-          <UiButton @click="handleSearch">
+          <UiButton
+            class="booking_search-btn"
+            @click="handleSearch"
+          >
             <svg
+              class="booking_search-icon"
               height="38"
               width="38"
             >
               <use xlink:href="/sprite.svg#i-search" />
             </svg>
+            <span class="booking_search-text">{{ $t('modal.booking.title') }}</span>
           </UiButton>
         </div>
       </UiCard>
@@ -232,42 +251,74 @@
 <script setup lang="ts">
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { apiFetch } from '~/composables/useApiFetch';
 
 type TripType = 'one_way' | 'round_trip'
 
-const { t } = useI18n();
+interface Airport {
+  id: number
+  name: string
+  iata_code: string
+  city_name: string
+  country_name: string
+}
+
+interface AirportsResponse {
+  status: boolean
+  message: string
+  data: Airport[]
+}
+
+const { t, locale } = useI18n();
 
 const tripType = ref<TripType>('one_way');
 const passengerCount = ref<number>(1);
 const departureDate = ref<string>('');
+const returnDate = ref<string>('');
 const cardRef = ref<HTMLElement | null>(null);
 const showBookingModal = ref(false);
+const validationError = ref('');
 const showSuccessModal = ref(false);
 let bookingContext: gsap.Context | null = null;
-const locationKeys = [
-  'tashkent',
-  'samarkand',
-  'bukhara',
-  'fergana',
-  'andijan',
-  'navoi',
-  'urgench',
-  'nukus',
-];
-const locations = computed(() =>
-  locationKeys.map(key => ({
-    key,
-    name: t(`booking.locations.${key}`),
-  })),
+
+// Fetch airports from API (lazy load for better performance)
+const { data: airportsData } = useLazyAsyncData<AirportsResponse>(
+  'airports',
+  () => apiFetch('/geography/airports/', { params: { lang: locale.value } }),
+  { watch: [locale] },
 );
-const fromLocation = ref<string>('');
-const toLocation = ref<string>('');
+
+const locations = computed(() => {
+  if (airportsData.value?.data) {
+    return airportsData.value.data.map(airport => ({
+      id: airport.id,
+      name: `${airport.city_name} (${airport.iata_code})`,
+    }));
+  }
+  return [];
+});
+
+const fromLocationId = ref<number | null>(null);
+const toLocationId = ref<number | null>(null);
+
+const fromLocationName = computed(() => {
+  const city = locations.value.find(loc => loc.id === fromLocationId.value);
+  return city?.name || '';
+});
+
+const toLocationName = computed(() => {
+  const city = locations.value.find(loc => loc.id === toLocationId.value);
+  return city?.name || '';
+});
 
 const bookingData = computed(() => ({
   tripType: tripType.value,
-  from: fromLocation.value,
-  to: toLocation.value,
+  fromId: fromLocationId.value,
+  toId: toLocationId.value,
+  from: fromLocationName.value,
+  to: toLocationName.value,
   departureDate: departureDate.value,
+  returnDate: returnDate.value,
   passengersCount: passengerCount.value,
 }));
 
@@ -288,13 +339,13 @@ function toggleToSelect() {
   }
 }
 
-function selectFromLocation(location: string) {
-  fromLocation.value = location;
+function selectFromLocation(id: number) {
+  fromLocationId.value = id;
   isFromOpen.value = false;
 }
 
-function selectToLocation(location: string) {
-  toLocation.value = location;
+function selectToLocation(id: number) {
+  toLocationId.value = id;
   isToOpen.value = false;
 }
 
@@ -311,13 +362,23 @@ function decrementPassengers() {
 }
 
 function handleSearch() {
+  validationError.value = '';
+
   // Validate form data
-  if (!fromLocation.value || !toLocation.value) {
-    alert(t('booking.selectLocations') || 'Iltimos, ketish va kelish manzillarini tanlang');
+  if (!fromLocationId.value || !toLocationId.value) {
+    validationError.value = t('booking.selectLocations') || 'Iltimos, ketish va kelish manzillarini tanlang';
+    return;
+  }
+  if (fromLocationId.value === toLocationId.value) {
+    validationError.value = t('booking.sameLocationError') || 'Ketish va borish manzili bir xil bo\'lishi mumkin emas';
     return;
   }
   if (!departureDate.value) {
-    alert(t('booking.selectDate') || 'Iltimos, uchish sanasini tanlang');
+    validationError.value = t('booking.selectDate') || 'Iltimos, uchish sanasini tanlang';
+    return;
+  }
+  if (tripType.value === 'round_trip' && !returnDate.value) {
+    validationError.value = t('booking.selectReturnDate') || 'Iltimos, qaytish sanasini tanlang';
     return;
   }
 
@@ -328,45 +389,61 @@ function handleBookingSuccess() {
   showSuccessModal.value = true;
 }
 
+function closeAllDropdowns() {
+  isFromOpen.value = false;
+  isToOpen.value = false;
+}
+
+function handleClickOutside(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.booking_field')) {
+    closeAllDropdowns();
+  }
+}
+
 onMounted(() => {
-  gsap.registerPlugin(ScrollTrigger);
-  const cardEl = cardRef.value as any;
-  const cardRoot = cardEl?.$el || cardEl;
-  if (!cardRoot)
-    return;
+  document.addEventListener('click', handleClickOutside);
 
-  bookingContext = gsap.context(() => {
-    const q = gsap.utils.selector(cardRoot);
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: cardRoot,
-        start: 'top 80%',
-        toggleActions: 'play none none reverse',
-      },
-    });
+  // Defer GSAP initialization to improve initial render performance
+  requestAnimationFrame(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const cardEl = cardRef.value as any;
+    const cardRoot = cardEl?.$el || cardEl;
+    if (!cardRoot)
+      return;
 
-    tl.from(cardRoot, {
-      opacity: 0,
-      y: 24,
-      duration: 0.6,
-      ease: 'power2.out',
-      clearProps: 'transform,opacity',
-    }).from(
-      q('.booking_card-header, .booking_field'),
-      {
+    bookingContext = gsap.context(() => {
+      const q = gsap.utils.selector(cardRoot);
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: cardRoot,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      tl.from(cardRoot, {
         opacity: 0,
-        y: 16,
         duration: 0.5,
         ease: 'power2.out',
-        stagger: 0.08,
-        clearProps: 'transform,opacity',
-      },
-      '-=0.3',
-    );
-  }, cardRoot);
+        clearProps: 'opacity',
+      }).from(
+        q('.booking_card-header, .booking_field'),
+        {
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.out',
+          stagger: 0.05,
+          clearProps: 'opacity',
+        },
+        '-=0.2',
+      );
+    }, cardRoot);
+  });
 });
 
 onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
   bookingContext?.revert();
   bookingContext = null;
 });
@@ -374,20 +451,24 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .booking {
-    transform: translateY(-50%);
-    @include respond(1470px) {
-      transform: translateY(0);
-      padding: 10rem 0;
-    }
-    @include respond(540px) {
-      padding: 5rem 0;
-    }
+  position: relative;
+  z-index: 2;
+  margin-top: -12rem;
+  contain: layout style;
+  @include respond(1470px) {
+    margin-top: 0;
+    padding: 10rem 0;
+  }
+  @include respond(540px) {
+    padding: 5rem 0;
+  }
     &_title {
         font-size: 2.4rem;
         line-height: 1;
         margin-right: 3rem;
     }
     &_card {
+        min-height: 14rem;
         &-header {
           display: flex;
           align-items: center;
@@ -411,12 +492,14 @@ onBeforeUnmount(() => {
         &-fields {
           display: flex;
           gap: 2.4rem;
-          @include respond(1120px) {
+          @include respond(1200px) {
             display: grid;
+            grid-template-columns: repeat(3, 1fr);
+          }
+          @include respond(768px) {
             grid-template-columns: 1fr 1fr;
           }
           @include respond(540px) {
-            display: grid;
             grid-template-columns: 1fr;
           }
         }
@@ -434,12 +517,16 @@ onBeforeUnmount(() => {
       color: inherit;
       cursor: pointer;
       text-align: left;
+      position: relative;
+      z-index: 1;
+
+      &:has(.booking_select-options) {
+        z-index: 100;
+      }
 
       &-counter {
         cursor: default;
       }
-
-      position: relative;
     }
     &_field-text {
       display: flex;
@@ -484,28 +571,34 @@ onBeforeUnmount(() => {
       left: 0;
       right: 0;
       top: calc(100% + 0.8rem);
-      z-index: 5;
+      z-index: 1000;
       list-style: none;
       margin: 0;
-      padding: 0.8rem;
+      padding: 1.2rem;
       display: grid;
       gap: 0.4rem;
-      max-height: 22rem;
+      max-height: 28rem;
       overflow-y: auto;
+      border-radius: 1.6rem;
+      border: 1px solid rgba($color: $color-white, $alpha: 0.1);
+      background: rgba(14, 21, 48, 0.98);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     }
     &_select-option {
       width: 100%;
       background: transparent;
       border: none;
       color: $color-white;
-      padding: 0.8rem 1rem;
-      border-radius: 0.8rem;
+      padding: 1.2rem 1.6rem;
+      border-radius: 1rem;
       text-align: left;
       cursor: pointer;
+      font-size: 1.5rem;
       transition: background 0.2s ease, transform 0.2s ease;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.1);
       }
 
       &:active {
@@ -588,6 +681,27 @@ onBeforeUnmount(() => {
         font-weight: 600;
         min-width: 2.4rem;
         text-align: center;
+      }
+    }
+
+    &_search-btn {
+      flex-shrink: 0;
+      @include respond(1200px) {
+        grid-column: 1 / -1;
+      }
+    }
+
+    &_search-icon {
+      display: block;
+      @include respond(1200px) {
+        display: none;
+      }
+    }
+
+    &_search-text {
+      display: none;
+      @include respond(1200px) {
+        display: block;
       }
     }
 }

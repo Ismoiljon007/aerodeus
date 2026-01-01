@@ -140,9 +140,12 @@ interface FormData {
 
 interface BookingData {
   tripType: string
+  fromId: number | null
+  toId: number | null
   from: string
   to: string
   departureDate: string
+  returnDate: string
   passengersCount: number
 }
 
@@ -160,7 +163,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const config = useRuntimeConfig();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const formData = ref<FormData>({
   name: '',
@@ -170,6 +173,7 @@ const formData = ref<FormData>({
 });
 
 const isLoading = ref(false);
+const errorMessage = ref('');
 
 function closeModal() {
   emit('update:modelValue', false);
@@ -190,9 +194,10 @@ async function handleSubmit() {
       method: 'POST',
       body: {
         trip_type: props.bookingData?.tripType,
-        departure_location: props.bookingData?.from,
-        arrival_location: props.bookingData?.to,
+        departure_airport: props.bookingData?.fromId,
+        arrival_airport: props.bookingData?.toId,
         departure_datetime: props.bookingData?.departureDate,
+        return_datetime: props.bookingData?.returnDate || null,
         passengers_count: props.bookingData?.passengersCount,
         customer_name: formData.value.name,
         customer_email: formData.value.email,
@@ -208,7 +213,18 @@ async function handleSubmit() {
     emit('success');
   } catch (error: any) {
     console.error('Booking submission error:', error);
-    alert(error?.data?.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.');
+    const errorData = error?.data;
+    let errMsg = errorData?.message || t('contact.error');
+
+    // Handle validation errors from API
+    if (errorData?.errors) {
+      const errorMessages = Object.values(errorData.errors).flat();
+      if (errorMessages.length > 0) {
+        errMsg = errorMessages.join('\n');
+      }
+    }
+
+    errorMessage.value = errMsg;
   } finally {
     isLoading.value = false;
   }

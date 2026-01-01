@@ -5,10 +5,20 @@ export async function apiFetch<T>(
 ) {
   try {
     const config = useRuntimeConfig();
-    const { locale } = useI18n();
+    // Use lang from params if provided, otherwise try to get from i18n
+    let lang = options?.params?.lang;
+    if (!lang) {
+      try {
+        const { locale } = useI18n();
+        lang = locale.value;
+      } catch {
+        lang = 'en'; // fallback
+      }
+    }
+
     const mergedParams = {
       ...(options?.params ?? {}),
-      lang: locale.value,
+      lang,
     };
 
     return await $fetch<T>(`${config.public.apiBase}${url}`, {

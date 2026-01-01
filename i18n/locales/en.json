@@ -1,4 +1,9 @@
 {
+  "seo": {
+    "title": "Aerodeus - Premium Private Charter Flights",
+    "description": "Book luxury private charter flights with Aerodeus. Experience premium aviation services, personalized travel solutions, and world-class comfort for business and leisure.",
+    "keywords": "private jet, charter flight, luxury aviation, VIP flights, business jet, Uzbekistan charter, private aircraft rental"
+  },
   "contact": {
     "title": "Contact Us",
     "subtitle": "Leave your information and we will contact you as soon as possible",
@@ -26,11 +31,14 @@
     "from": "Departure",
     "to": "Destination",
     "date": "Flight Date and Time",
+    "returnDate": "Return Date and Time",
+    "selectReturnDate": "Please select return date",
     "passengers": "Passengers",
     "passengersCount": "{count} person | {count} people",
     "select": "Select",
     "selectLocations": "Please select departure and arrival locations",
     "selectDate": "Please select flight date",
+    "sameLocationError": "Departure and arrival locations cannot be the same",
     "locations": {
       "tashkent": "Tashkent",
       "samarkand": "Samarkand",

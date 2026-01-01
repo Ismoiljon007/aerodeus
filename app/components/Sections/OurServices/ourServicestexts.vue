@@ -80,9 +80,25 @@ const features = computed(() => {
     position: relative;
     height: 100%;
 
+    @include respond(768px) {
+      gap: 1.5rem;
+    }
+
+    @include respond(540px) {
+      gap: 1.2rem;
+    }
+
     h2 {
       font-weight: 500;
       font-size: 3.2rem;
+
+      @include respond(768px) {
+        font-size: 2.6rem;
+      }
+
+      @include respond(540px) {
+        font-size: 2.2rem;
+      }
     }
 
     p {
@@ -91,6 +107,16 @@ const features = computed(() => {
       max-width: 543px;
       opacity: 0.7;
       margin-bottom: 2rem;
+
+      @include respond(768px) {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      @include respond(540px) {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+      }
     }
     button {
       @media (max-width: 1200px) {
@@ -103,16 +129,37 @@ const features = computed(() => {
       gap: 15px;
       margin-top: auto;
 
+      @include respond(768px) {
+        gap: 12px;
+      }
+
+      @include respond(540px) {
+        gap: 10px;
+      }
+
       .our-services-bottom-item {
         display: flex;
         align-items: center;
         gap: 13px;
-        span {
-        opacity: 0.7;
 
+        @include respond(540px) {
+          gap: 10px;
+        }
+
+        span {
+          opacity: 0.7;
+
+          @include respond(540px) {
+            font-size: 1.4rem;
+          }
         }
         svg {
           color: $color-yellow;
+
+          @include respond(540px) {
+            width: 20px;
+            height: 20px;
+          }
         }
       }
       @media (max-width: 1200px) {

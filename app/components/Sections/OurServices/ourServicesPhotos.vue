@@ -67,6 +67,11 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
 
     @include respond(1200px) {
       width: 100%;
+      justify-content: center;
+    }
+
+    @include respond(768px) {
+      gap: 15px;
     }
 
     .first-images {
@@ -75,6 +80,16 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
             height: 51rem;
             object-fit: cover;
             border-radius: 8px;
+
+            @include respond(768px) {
+              width: 28rem;
+              height: 40rem;
+            }
+
+            @include respond(540px) {
+              width: 170px;
+              height: 247px;
+            }
         }
     }
 
@@ -82,6 +97,10 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
         display: flex;
         flex-direction: column;
         gap: 30px;
+
+        @include respond(768px) {
+            gap: 15px;
+        }
 
         @include respond(630px) {
             gap: 10px;
@@ -93,8 +112,14 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
             object-fit: cover;
             border-radius: 8px;
 
+            @include respond(768px) {
+                width: 26rem;
+                height: 19rem;
+            }
+
             @include respond(630px) {
-                height: calc(50% - 5px);
+                width: 170px;
+                height: 117px;
             }
         }
     }
@@ -103,6 +128,11 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
       .duble-img {
         flex-direction: row;
         gap: 30px;
+
+        @include respond(768px) {
+          gap: 15px;
+        }
+
         @include respond(630px) {
           gap: 10px;
         }
@@ -111,14 +141,24 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
           width: calc(50% - 15px);
           height: 51rem;
           &:first-child {
-            transform: translateY(-5%);
+            transform: translateY(-1%);
           }
           &:last-child {
-            transform: translateY(5%);
+            transform: translateY(1%);
+          }
+
+          @include respond(768px) {
+            height: 40rem;
+            width: calc(50% - 7.5px);
           }
 
           @include respond(630px) {
-            width: calc(50% - 5px);
+            width: 170px;
+            height: 24rem;
+          }
+
+          @include respond(540px) {
+            height: 20rem;
           }
         }
       }

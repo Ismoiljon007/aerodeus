@@ -4,16 +4,11 @@
       <NuxtLink
         class="site-logo"
         to="/"
+        aria-label="Aerodeus Home"
       >
-        <!-- <svg
-          height="80"
-          width="133"
-        >
-          <use xlink:href="/sprite.svg#i-logo" />
-        </svg> -->
         <img
           :src="settings?.data?.logo"
-          alt=""
+          alt="Aerodeus"
         >
       </NuxtLink>
       <div class="site-footer_center">
@@ -47,6 +42,7 @@
         <a
           v-if="settings?.data?.telegram"
           :href="settings?.data?.telegram"
+          aria-label="Telegram"
         >
           <svg
             height="25"
@@ -58,6 +54,7 @@
         <a
           v-if="settings?.data?.instagram"
           :href="settings?.data?.instagram"
+          aria-label="Instagram"
         >
           <svg
             height="25"
@@ -69,6 +66,7 @@
         <a
           v-if="settings?.data?.facebook"
           :href="settings?.data?.facebook"
+          aria-label="Facebook"
         >
           <svg
             height="25"
@@ -80,6 +78,7 @@
         <a
           v-if="settings?.data?.youtube"
           :href="settings?.data?.youtube"
+          aria-label="YouTube"
         >
           <svg
             height="25"
@@ -91,6 +90,7 @@
         <a
           v-if="settings?.data?.linkedin"
           :href="settings?.data?.linkedin"
+          aria-label="LinkedIn"
         >
           <svg
             height="25"
@@ -102,6 +102,7 @@
         <a
           v-if="settings?.data?.twitter"
           :href="settings?.data?.twitter"
+          aria-label="Twitter"
         >
           <svg
             height="25"
@@ -116,11 +117,25 @@
 </template>
 
 <script setup lang="ts">
+interface SettingsData {
+  logo: string
+  telegram: string
+  instagram: string
+  facebook: string
+  youtube: string
+  linkedin: string
+  twitter: string
+}
+
+interface SettingsResponse {
+  data: SettingsData
+}
+
 const { locale } = useI18n();
 const localePath = useLocalePath();
-const { data: settings } = await useAsyncData(
+const { data: settings } = await useAsyncData<SettingsResponse>(
   'settings',
-  async () => apiFetch('/settings/', { params: { lang: locale.value } }),
+  async () => apiFetch<SettingsResponse>('/settings/', { params: { lang: locale.value } }),
   { watch: [locale] },
 );
 </script>
@@ -157,6 +172,19 @@ const { data: settings } = await useAsyncData(
     svg {
       width: 14rem;
       height: 8rem;
+    }
+    img {
+      width: 14rem;
+      height: auto;
+      object-fit: contain;
+
+      @include respond(768px) {
+        width: 12rem;
+      }
+
+      @include respond(540px) {
+        width: 10rem;
+      }
     }
   }
   .sitenav {

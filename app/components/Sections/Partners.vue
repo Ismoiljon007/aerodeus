@@ -65,17 +65,41 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .partners {
+  padding-top: 6rem;
   margin-bottom: 10rem;
+  @include respond(768px) {
+    margin-bottom: 5rem;
+  }
     .container {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 5rem;
         flex-wrap: wrap;
+        @include respond(1200px) {
+          gap: 3rem;
+        }
+        @include respond(768px) {
+          gap: 2rem;
+        }
     }
     &_logo {
       will-change: transform;
-      object-fit: contain ;
+      object-fit: contain;
+      width: 343px;
+      height: 75px;
+      @include respond(1200px) {
+        width: 280px;
+        height: 60px;
+      }
+      @include respond(768px) {
+        width: 200px;
+        height: 45px;
+      }
+      @include respond(540px) {
+        width: 140px;
+        height: 35px;
+      }
     }
 }
 </style>

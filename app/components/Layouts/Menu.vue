@@ -4,6 +4,7 @@
       <NuxtLink
         class="site-logo"
         to="/"
+        aria-label="Aerodeus Home"
       >
         <svg
           height="80"
@@ -15,6 +16,7 @@
       <UiButton
         variant="secondary"
         icon="rounded"
+        aria-label="Close menu"
         @click="emit('close')"
       >
         <svg
