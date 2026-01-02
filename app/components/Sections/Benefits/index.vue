@@ -84,7 +84,10 @@ onBeforeUnmount(() => {
     padding: 9rem 0 13rem;
     margin-bottom: 5rem;
     overflow: hidden;
-
+    @media (max-width: 1050px) {
+      padding: 6rem 0;
+      margin: 0;
+    }
     &::before {
         content: "";
         position: absolute;
@@ -115,7 +118,7 @@ onBeforeUnmount(() => {
     }
 }
 
-:deep(.benefits__bg-picture) {
+:deep(picture) {
     position: absolute;
     inset: 0;
     width: 100%;

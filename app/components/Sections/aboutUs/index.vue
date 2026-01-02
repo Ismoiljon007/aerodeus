@@ -22,6 +22,9 @@ defineProps<{ about?: any, statistics?: any }>();
 <style scoped lang="scss">
     .about-us {
         padding: 80px 0;
+        @media (max-width: 540px) {
+          padding: 40px 0;
+        }
         .about-us-wrapper {
             display: flex;
             align-items: center;

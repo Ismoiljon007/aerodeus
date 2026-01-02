@@ -285,8 +285,7 @@ function svgToClient(x: number, y: number) {
     renderWidth = height * svgAspect;
     offsetX = (width - renderWidth) / 2;
     offsetY = 0;
-  }
-  else {
+  } else {
     // Container is taller than SVG - SVG fits to width, centered vertically
     renderWidth = width;
     renderHeight = width / svgAspect;

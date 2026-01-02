@@ -222,6 +222,9 @@ function onSlideChange(swiper: SwiperType) {
   @media (max-width: 768px) {
     margin: 40px 0;
   }
+  @media (max-width: 540px) {
+    margin: 0 0 40px;
+  }
 
   &__header {
     text-align: center;

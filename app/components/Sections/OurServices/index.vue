@@ -185,7 +185,7 @@ onBeforeUnmount(() => {
             }
 
             @include respond(540px) {
-                padding: 10px 0;
+                padding: 20px 0;
                 gap: 20px;
             }
         }
