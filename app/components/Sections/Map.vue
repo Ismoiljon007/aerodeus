@@ -148,12 +148,12 @@ interface Marker extends MarkerBase {
 
 const { locale } = useI18n();
 const { data: sectionData } = await useAsyncData<GeographySectionResponse>(
-  'geography-section',
+  `geography-section-${locale.value}`,
   () => apiFetch('/geography/section/'),
   { watch: [locale] },
 );
 const { data: routesData } = await useAsyncData<RoutesResponse>(
-  'geography-routes',
+  `geography-routes-${locale.value}`,
   () => apiFetch('/geography/routes/'),
   { watch: [locale] },
 );
@@ -311,8 +311,8 @@ function svgToClient(x: number, y: number) {
 function markerStyle(marker: Marker) {
   const pos = svgToClient(marker.x, marker.y);
   return {
-    'left': `${pos.left}px`,
-    'top': `${pos.top}px`,
+    left: `${pos.left}px`,
+    top: `${pos.top}px`,
   };
 }
 
