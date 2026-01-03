@@ -1,5 +1,8 @@
 <template>
-  <section class="hero">
+  <section
+    ref="heroRef"
+    class="hero"
+  >
     <NuxtPicture
       src="/images/jpg/hero.jpg"
       format="webp"
@@ -52,47 +55,67 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 defineProps<{ hero: any }>();
 
+const heroRef = ref<HTMLElement | null>(null);
 const planeRef = ref<HTMLElement | null>(null);
 const titleRef = ref<HTMLElement | null>(null);
 const descRef = ref<HTMLElement | null>(null);
 let gsapContext: gsap.Context | null = null;
 let introTween: gsap.core.Tween | null = null;
+let scrollTween: gsap.core.Tween | null = null;
 
 onMounted(() => {
   gsap.registerPlugin(ScrollTrigger);
 
+  const heroEl = heroRef.value;
+  if (!heroEl)
+    return;
+
   const planeRoot = planeRef.value as any;
   const planeEl = planeRoot?.$el || planeRoot;
   const target = planeEl?.querySelector?.('img') || planeEl;
+  const imgEl = target?.tagName === 'IMG' ? target : target?.querySelector?.('img');
 
   if (!target) {
     console.warn('Plane element topilmadi');
     return;
   }
 
+  const setupScrollTween = () => {
+    if (scrollTween)
+      return;
+    scrollTween = gsap.to(target, {
+      yPercent: -200,
+      scale: 3,
+      ease: 'none',
+      overwrite: 'auto',
+      scrollTrigger: {
+        trigger: heroEl,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+        invalidateOnRefresh: true,
+        markers: false,
+      },
+    });
+  };
+
   gsapContext = gsap.context(() => {
     gsap.set(target, { transformOrigin: '50% 50%' });
     introTween = gsap.fromTo(
       target,
-      { opacity: 0.8 },
+      {
+        opacity: 0,
+        scale: 0.5,
+      },
       {
         opacity: 1,
-        duration: 0.8,
-        ease: 'power2.out',
+        scale: 1,
+        rotation: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        paused: true,
         onComplete: () => {
-          gsap.to(target, {
-            yPercent: -200,
-            scale: 3,
-            ease: 'none',
-            overwrite: 'auto',
-            scrollTrigger: {
-              trigger: '.hero',
-              start: 'top top',
-              end: 'bottom top',
-              scrub: true,
-              markers: false,
-            },
-          });
+          setupScrollTween();
           ScrollTrigger.refresh();
         },
       },
@@ -109,11 +132,21 @@ onMounted(() => {
       });
     }
   }, target);
+
+  if (imgEl && !imgEl.complete) {
+    imgEl.addEventListener('load', () => {
+      introTween?.play();
+    }, { once: true });
+  } else {
+    introTween?.play();
+  }
 });
 
 onBeforeUnmount(() => {
   introTween?.kill();
   introTween = null;
+  scrollTween?.kill();
+  scrollTween = null;
   gsapContext?.revert();
   gsapContext = null;
 });

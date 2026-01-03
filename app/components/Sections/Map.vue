@@ -59,7 +59,7 @@
             <span
               class="map__photo"
               :class="{ 'map__photo--fallback': !cityImageUrl(marker.city) }"
-              :style="markerPhotoStyle(marker.city)"
+              :style="markerPhotoStyle(marker)"
             />
             <span class="map__pin-line" />
             <span
@@ -196,7 +196,13 @@ const PIN_SCALE = {
   fallback: 1,
 };
 
-// Seeded random function for consistent stroke widths
+const PHOTO_SIZE = {
+  min: 4.0,
+  max: 9.6,
+  fallback: 6,
+};
+
+// Seeded random function for consistent randomness
 function seededRandom(seed: number) {
   const x = Math.sin(seed * 9999) * 10000;
   return x - Math.floor(x);
@@ -307,16 +313,25 @@ function markerStyle(marker: Marker) {
   return {
     'left': `${pos.left}px`,
     'top': `${pos.top}px`,
-    '--pin-scale': String(marker.scale),
   };
 }
 
-function markerPhotoStyle(city: City) {
-  const imgUrl = cityImageUrl(city);
+function markerPhotoSize(marker: Marker) {
+  if (!Number.isFinite(marker.scale))
+    return PHOTO_SIZE.fallback;
+  const t = (marker.scale - PIN_SCALE.min) / (PIN_SCALE.max - PIN_SCALE.min);
+  const clamped = Math.min(1, Math.max(0, t));
+  return PHOTO_SIZE.min + clamped * (PHOTO_SIZE.max - PHOTO_SIZE.min);
+}
+
+function markerPhotoStyle(marker: Marker) {
+  const imgUrl = cityImageUrl(marker.city);
+  const size = markerPhotoSize(marker);
+  const sizeStyle = { '--photo-size': `${size}rem` } as Record<string, string>;
   if (imgUrl) {
-    return { backgroundImage: `url("${imgUrl}")` };
+    return { ...sizeStyle, backgroundImage: `url("${imgUrl}")` };
   }
-  return { backgroundColor: fallbackColorForCity(city) };
+  return { ...sizeStyle, backgroundColor: fallbackColorForCity(marker.city) };
 }
 
 function showTooltip(marker: Marker) {
@@ -372,13 +387,18 @@ function cityImageUrl(city: City) {
   return null;
 }
 
-function fallbackColorForCity(city: City) {
+function cityHash(city: City) {
   const key = `${city?.name || ''}-${city?.country_code || ''}`;
   let hash = 0;
   for (let i = 0; i < key.length; i += 1) {
     hash = ((hash << 5) - hash) + key.charCodeAt(i);
     hash |= 0;
   }
+  return hash;
+}
+
+function fallbackColorForCity(city: City) {
+  const hash = cityHash(city);
   const palette = ['#3e6bff', '#00d8a4', '#ffb454', '#ff6b8a', '#8a7dff', '#39b7ff'];
   return palette[Math.abs(hash) % palette.length];
 }
@@ -388,24 +408,13 @@ function solidColorDataUri(color: string) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-function getCitySizeValue(city: City) {
-  const size = city?.size ?? city?.population ?? city?.importance;
-  return Number.isFinite(size) ? size : null;
-}
-
 function buildScaleForMarkers(list: MarkerBase[]) {
-  const values = list.map(marker => getCitySizeValue(marker.city)).filter(value => value !== null);
-  if (!values.length)
-    return () => PIN_SCALE.fallback;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  if (min === max)
+  if (!list.length)
     return () => PIN_SCALE.fallback;
   return (city: City) => {
-    const value = getCitySizeValue(city);
-    if (!Number.isFinite(value))
-      return PIN_SCALE.fallback;
-    const t = (value - min) / (max - min);
+    const baseSeed = Number.isFinite(city?.id) ? city.id : cityHash(city);
+    const seed = Math.abs(baseSeed) || 1;
+    const t = seededRandom(seed);
     return PIN_SCALE.min + t * (PIN_SCALE.max - PIN_SCALE.min);
   };
 }
@@ -891,8 +900,8 @@ onBeforeUnmount(() => {
     }
 
     .map__photo {
-        width: 6rem;
-        height: 6rem;
+        width: var(--photo-size, 6rem);
+        height: var(--photo-size, 6rem);
         border-radius: 50%;
         background-size: cover;
         background-position: center;

@@ -327,7 +327,7 @@ onBeforeUnmount(() => {
         right: -45px;
         top: 19px;
         display: inline-block;
-        z-index: 0;
+        z-index: 2;
         width: 6rem;
         overflow: visible;
         pointer-events: none;
@@ -364,7 +364,7 @@ onBeforeUnmount(() => {
         left: 0;
         top: 0;
         will-change: transform;
-        z-index: 1;
+        z-index: 20;
         pointer-events: none;
 
         @include respond(885px) {
