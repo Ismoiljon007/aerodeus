@@ -119,6 +119,9 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
             @include respond(630px) {
                 height: 117px;
             }
+            @include respond(400px) {
+                height: 117px;
+            }
         }
     }
 
@@ -163,6 +166,10 @@ const sideImages = computed(() => (props.twoImages ? limitedImages.value : limit
           @include respond(540px) {
             height: 100%;
             width: 100%;
+          }
+          @include respond(400px) {
+            height: 100%;
+            width: 48%;
           }
         }
       }

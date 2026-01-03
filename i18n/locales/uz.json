@@ -88,7 +88,7 @@
   "sections": {
     "ourServices": {
       "title": "Bizning xizmatlarimiz",
-      "subtitle": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the"
+      "subtitle": "Xususiy aviatsiya bo'yicha to'liq xizmatlar: charter parvozlar, VIP safarlar, yuk tashish va parvozlarni qo'llab-quvvatlash."
     },
     "benefits": {
       "title": "Aerodeus afzalliklari"
@@ -99,7 +99,7 @@
     },
     "flights": {
       "title": "Eng ko'p tanlanadigan samolyotlar",
-      "subtitle": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the",
+      "subtitle": "Flotimizdagi eng ko'p buyurtma qilinadigan samolyotlarni ko'rib chiqing va parvozingiz uchun mosini tanlang.",
       "submitApplication": "Ariza yuborish",
       "noData": "Hozircha ma'lumot yo'q"
     }

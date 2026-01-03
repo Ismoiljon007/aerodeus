@@ -30,30 +30,44 @@
     <nav class="sitenav">
       <ul>
         <li>
-          <NuxtLink :to="localePath('/')">
+          <NuxtLink
+            :to="localePath('/#services')"
+            @click="emit('close')"
+          >
             {{ $t('navbar.services') }}
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink :to="localePath('/')">
+          <NuxtLink
+            :to="localePath('/#advantages')"
+            @click="emit('close')"
+          >
             {{ $t('navbar.advantages') }}
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink :to="localePath('/')">
+          <NuxtLink
+            :to="localePath('/#fleet')"
+            @click="emit('close')"
+          >
             {{ $t('navbar.fleet') }}
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink :to="localePath('/')">
+          <NuxtLink
+            :to="localePath('/#how-we-work')"
+            @click="emit('close')"
+          >
             {{ $t('navbar.howWeWork') }}
           </NuxtLink>
         </li>
       </ul>
     </nav>
     <UiButton
+      :to="localePath('/#contact')"
       variant="secondary"
       class="menu_button"
+      @click="emit('close')"
     >
       {{ $t('navbar.contactUs') }}
     </UiButton>

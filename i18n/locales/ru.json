@@ -88,7 +88,7 @@
   "sections": {
     "ourServices": {
       "title": "Наши услуги",
-      "subtitle": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the"
+      "subtitle": "Полный спектр услуг частной авиации: чартеры, VIP-перелеты, грузовые решения и сопровождение рейсов."
     },
     "benefits": {
       "title": "Преимущества Aerodeus"
@@ -99,7 +99,7 @@
     },
     "flights": {
       "title": "Самые популярные самолеты",
-      "subtitle": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the",
+      "subtitle": "Посмотрите самые востребованные самолеты нашего флота и выберите подходящий для вашей поездки.",
       "submitApplication": "Подать заявку",
       "noData": "Пока нет данных"
     }

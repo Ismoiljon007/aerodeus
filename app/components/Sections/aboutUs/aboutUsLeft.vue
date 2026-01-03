@@ -282,7 +282,18 @@ onBeforeUnmount(() => {
     .about-us-main-img {
         width: 40.7rem;
         height: 54rem;
+        border-radius: 12px;
         flex-shrink: 0;
+            @include respond(885px) {
+
+              width: 100%;
+              object-fit: cover;
+        }
+        @include respond(450px) {
+              width: 100%;
+              height: 252px;
+              object-fit: cover;
+        }
     }
 }
 
@@ -296,9 +307,18 @@ onBeforeUnmount(() => {
 
     @include respond(885px) {
         height: auto;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+    }
+    @include respond(830px) {
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+    }
+    @include respond(600px) {
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
     }
 
     .about-us-line-dec {
@@ -359,17 +379,23 @@ onBeforeUnmount(() => {
         flex-direction: column;
         align-items: center;
         gap: 1.2rem;
+    @include respond(885px) {
+      min-width: fit-content;
+    }
         h3 {
             font-weight: 300;
             line-height: 1;
             font-size: 4rem;
             white-space: nowrap;
+    @include respond(885px) {
+      font-size: 3.6rem;
+    }
         }
 
         span {
             display: block;
-            font-size: 14px;
-            white-space: nowrap;
+            font-size: 1.4rem;
+            text-align: center;
         }
     }
 }
