@@ -112,12 +112,6 @@ interface RouteRow {
   to_city: City
 }
 
-interface RoutesResponse {
-  status: boolean
-  message: string
-  data: RouteRow[]
-}
-
 interface GeographySection {
   id: number
   title: string
@@ -125,13 +119,7 @@ interface GeographySection {
   map_image: string | null
 }
 
-interface GeographySectionResponse {
-  status: boolean
-  message: string
-  data: GeographySection
-}
-
-    type MarkerKind = 'from' | 'to';
+type MarkerKind = 'from' | 'to';
 
 interface MarkerBase {
   key: string
@@ -146,17 +134,13 @@ interface Marker extends MarkerBase {
   scale: number
 }
 
-const { locale } = useI18n();
-const { data: sectionData } = await useAsyncData<GeographySectionResponse>(
-  `geography-section-${locale.value}`,
-  () => apiFetch('/geography/section/'),
-  { watch: [locale] },
-);
-const { data: routesData } = await useAsyncData<RoutesResponse>(
-  `geography-routes-${locale.value}`,
-  () => apiFetch('/geography/routes/'),
-  { watch: [locale] },
-);
+const props = withDefaults(defineProps<{
+  section: GeographySection | null
+  routes: RouteRow[]
+}>(), {
+  section: null,
+  routes: () => [],
+});
 
 const wrapRef = ref<HTMLElement | null>(null);
 const mapHostRef = ref<HTMLDivElement | null>(null);
@@ -170,8 +154,8 @@ const svgReady = ref(false);
 const highlightedCountries = new Set<SVGPathElement>();
 let resizeObserver: ResizeObserver | null = null;
 
-const routes = computed(() => routesData.value?.data ?? []);
-const section = computed(() => sectionData.value?.data ?? null);
+const routes = computed(() => props.routes);
+const section = computed(() => props.section);
 const sectionTitle = computed(() => section.value?.title ?? 'Uchishlar Geografiyasi');
 const sectionSubtitle = computed(() => section.value?.subtitle ?? '');
 

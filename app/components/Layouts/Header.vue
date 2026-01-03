@@ -21,7 +21,7 @@
           >
             <use xlink:href="/sprite.svg#i-globe" />
           </svg>
-          <span>{{ locale }}</span>
+          <span class="capitalize">{{ locale }}</span>
         </button>
         <div
           v-if="openLang"
@@ -159,6 +159,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
+  .capitalize {
+    text-transform: lowercase;
+    &::first-letter {
+      text-transform: uppercase !important;
+    }
+  }
 .site-header {
   position: relative;
   z-index: 2;
