@@ -453,7 +453,7 @@ onBeforeUnmount(() => {
 .booking {
   position: relative;
   z-index: 2;
-  margin-top: -12rem;
+  margin-top: -8rem;
   contain: layout style;
   @include respond(1470px) {
     margin-top: 0;

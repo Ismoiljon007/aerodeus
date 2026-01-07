@@ -38,7 +38,7 @@
       <NuxtImg
         ref="planeRef"
         width="1105"
-        height="467"
+        height="420"
         src="/images/png/plane.png"
         class="hero_img"
         alt="Samolyot"
