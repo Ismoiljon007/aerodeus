@@ -41,7 +41,7 @@ export default defineNuxtConfig({
 
   // Site configuration for SEO
   site: {
-    url: 'https://aerodeus.uz',
+    url: 'https://aerodeus.com',
     name: 'Aerodeus',
     description: 'Premium private charter flight booking platform',
     defaultLocale: 'en',
