@@ -9,19 +9,6 @@ export default defineNuxtConfig({
       siteUrl: 'https://aerodeus.uz',
     },
   },
-
-  // Performance optimizations
-  experimental: {
-    payloadExtraction: true,
-  },
-
-  nitro: {
-    compressPublicAssets: true,
-    prerender: {
-      crawlLinks: true,
-    },
-  },
-
   vite: {
     css: {
       preprocessorOptions: {
